@@ -1,7 +1,7 @@
 package com.yada.ssp.apiServer.service;
 
-import com.yada.ssp.apiServer.dao.OrgKeyDao;
-import com.yada.ssp.apiServer.model.OrgKey;
+import com.yada.ssp.apiServer.dao.ApiOrgDao;
+import com.yada.ssp.apiServer.model.ApiOrg;
 import com.yada.ssp.apiServer.net.SspClient;
 import com.yada.ssp.apiServer.util.SignUtil;
 import com.yada.ssp.apiServer.view.*;
@@ -16,15 +16,15 @@ public class ApiService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final OrgKeyDao orgKeyDao;
+    private final ApiOrgDao apiOrgDao;
     private final SspClient sspClient;
 
     @Value("${signature.private-key}")
     private String privateKey;
 
     @Autowired
-    public ApiService(OrgKeyDao orgKeyDao, SspClient sspClient) {
-        this.orgKeyDao = orgKeyDao;
+    public ApiService(ApiOrgDao apiOrgDao, SspClient sspClient) {
+        this.apiOrgDao = apiOrgDao;
         this.sspClient = sspClient;
     }
 
@@ -45,8 +45,8 @@ public class ApiService {
         req.setCertificateSignature(signature);
 
         // 请求信息验签
-        OrgKey orgKey = orgKeyDao.findById(req.getMsgInfo().getOrgId()).orElse(new OrgKey());
-        if (orgKey.getPublicKey() != null && SignUtil.verify(req, sign, orgKey.getPublicKey())) {
+        ApiOrg apiOrg = apiOrgDao.findById(req.getMsgInfo().getOrgId()).orElse(new ApiOrg());
+        if (apiOrg.getPublicKey() != null && SignUtil.verify(req, sign, apiOrg.getPublicKey())) {
             // 回调处理
             callback.handle(req.getTrxInfo(), resp);
         } else {

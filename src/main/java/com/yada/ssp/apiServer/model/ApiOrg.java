@@ -1,18 +1,24 @@
 package com.yada.ssp.apiServer.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
-@Entity(name = "T_B_ORG_KEY")
-public class OrgKey {
+@Entity(name = "T_B_MERAPI_ORG")
+public class ApiOrg {
 
     @Id
     @Column
     private String orgId;
 
     @Column
+    private String orgName;
+
+    @Column
     private String publicKey;
+
+    @OneToMany
+    @JoinTable
+    private List<String> merchants;
 
     public String getOrgId() {
         return orgId;

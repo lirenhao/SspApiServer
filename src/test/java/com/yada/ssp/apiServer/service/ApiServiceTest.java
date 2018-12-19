@@ -1,7 +1,7 @@
 package com.yada.ssp.apiServer.service;
 
-import com.yada.ssp.apiServer.dao.OrgKeyDao;
-import com.yada.ssp.apiServer.model.OrgKey;
+import com.yada.ssp.apiServer.dao.ApiOrgDao;
+import com.yada.ssp.apiServer.model.ApiOrg;
 import com.yada.ssp.apiServer.net.SspClient;
 import com.yada.ssp.apiServer.util.SignUtil;
 import com.yada.ssp.apiServer.view.*;
@@ -24,7 +24,7 @@ public class ApiServiceTest {
     private final String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCgFGVfrY4jQSoZQWWygZ83roKXWD4YeT2x2p41dGkPixe73rT2IW04glagN2vgoZoHuOPqa5and6kAmK2ujmCHu6D1auJhE2tXP+yLkpSiYMQucDKmCsWMnW9XlC5K7OSL77TXXcfvTvyZcjObEz6LIBRzs6+FqpFbUO9SJEfh6wIDAQAB";
 
     @MockBean
-    private OrgKeyDao orgKeyDao;
+    private ApiOrgDao apiOrgDao;
     @MockBean
     private SspClient sspClient;
     @Autowired
@@ -32,10 +32,10 @@ public class ApiServiceTest {
 
     @Test
     public void handle() {
-        OrgKey orgKey = new OrgKey();
+        ApiOrg orgKey = new ApiOrg();
         orgKey.setOrgId("0001");
         orgKey.setPublicKey(publicKey);
-        Mockito.when(orgKeyDao.findById(Mockito.anyString()))
+        Mockito.when(apiOrgDao.findById(Mockito.anyString()))
                 .thenReturn(Optional.empty()).thenReturn(Optional.of(orgKey));
 
         CertificateSignature certSign = new CertificateSignature();
