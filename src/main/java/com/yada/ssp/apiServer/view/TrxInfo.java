@@ -1,22 +1,22 @@
 package com.yada.ssp.apiServer.view;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class TrxInfo {
 
     @NotEmpty
     @Size(min = 15, max = 15)
-    @JsonProperty("MerchantId")
+    @JsonProperty("merchantId")
     private String merchantId; // 商户号
 
     @NotEmpty
     @Size(min = 8, max = 8)
-    @JsonProperty("TerminalId")
+    @JsonProperty("terminalId")
     private String terminalId; // 终端号
 
     public String getMerchantId() {

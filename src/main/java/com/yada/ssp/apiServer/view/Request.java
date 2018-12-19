@@ -1,23 +1,23 @@
 package com.yada.ssp.apiServer.view;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.validation.Valid;
 
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Request <T extends TrxInfo> {
 
     @Valid
-    @JsonProperty("MsgInfo")
+    @JsonProperty("msgInfo")
     private MsgInfo msgInfo;
 
     @Valid
-    @JsonProperty("TrxInfo")
+    @JsonProperty("trxInfo")
     private T trxInfo;
 
     @Valid
-    @JsonProperty("CertificateSignature")
+    @JsonProperty("certificateSignature")
     private CertificateSignature certificateSignature;
 
     public MsgInfo getMsgInfo() {

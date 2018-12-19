@@ -1,27 +1,27 @@
 package com.yada.ssp.apiServer.view;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.validation.constraints.NotEmpty;
 
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class MsgInfo {
 
     @NotEmpty
-    @JsonProperty("VersionNo")
+    @JsonProperty("versionNo")
     private String versionNo; // 版本号
 
     @NotEmpty
-    @JsonProperty("TimeStamp")
+    @JsonProperty("timeStamp")
     private String timeStamp; // 时间戳
 
     @NotEmpty
-    @JsonProperty("TranId")
+    @JsonProperty("tranId")
     private String tranId; // 交易类型ID
 
     @NotEmpty
-    @JsonProperty("OrgId")
+    @JsonProperty("orgId")
     private String orgId; // 机构ID
 
     public String getVersionNo() {

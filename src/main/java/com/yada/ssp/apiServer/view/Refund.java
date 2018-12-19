@@ -1,40 +1,40 @@
 package com.yada.ssp.apiServer.view;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Refund extends TrxInfo {
 
     @NotEmpty
     @Size(min = 1, max = 12)
-    @JsonProperty("TranAmt")
+    @JsonProperty("tranAmt")
     private String tranAmt;
 
     @NotEmpty
-    @JsonProperty("CcyCode")
+    @JsonProperty("ccyCode")
     private String ccyCode;
 
-    @JsonProperty("ChannelId")
+    @JsonProperty("channelId")
     private String channelId;
 
     @NotEmpty
     @Size(min = 24, max = 64)
-    @JsonProperty("MerTraceNo")
+    @JsonProperty("merTraceNo")
     private String merTraceNo;
 
     @NotEmpty
     @Size(min = 24, max = 64)
-    @JsonProperty("OriginalMerTraceNo")
+    @JsonProperty("originalMerTraceNo")
     private String originalMerTraceNo;
 
-    @JsonProperty("BankLsNo")
+    @JsonProperty("bankLsNo")
     private String bankLsNo;
 
-    @JsonProperty("ChannelTraceNo")
+    @JsonProperty("channelTraceNo")
     private String channelTraceNo;
 
     public String getTranAmt() {

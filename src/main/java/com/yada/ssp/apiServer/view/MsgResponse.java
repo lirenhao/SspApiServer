@@ -1,9 +1,9 @@
 package com.yada.ssp.apiServer.view;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class MsgResponse {
 
     public MsgResponse(String respCode, String respDesc) {
@@ -11,9 +11,9 @@ public class MsgResponse {
         this.respDesc = respDesc;
     }
 
-    @JsonProperty("RespCode")
+    @JsonProperty("respCode")
     private String respCode;
-    @JsonProperty("RespDesc")
+    @JsonProperty("respDesc")
     private String respDesc;
 
     public String getRespCode() {
