@@ -1,6 +1,7 @@
 package com.yada.ssp.apiServer.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "T_B_MERAPI_ORG")
@@ -18,7 +19,7 @@ public class ApiOrg {
 
     @OneToMany
     @JoinTable(name = "T_B_APIORG_MERLIST", joinColumns = @JoinColumn(name = "ORG_ID"), inverseJoinColumns = @JoinColumn(name = "MERCHANT_ID"))
-    private Set<Merchant> merchants;
+    private Set<Merchant> merchants = new HashSet<>();
 
     public String getOrgId() {
         return orgId;

@@ -47,6 +47,7 @@ public class ApiService {
         signature.setSignature("00000000");
 
         Response<T> resp = new Response<>();
+        resp.setMsgInfo(req.getMsgInfo());
         resp.setCertificateSignature(signature);
 
         String sign = req.getCertificateSignature().getSignature();
@@ -69,9 +70,7 @@ public class ApiService {
             resp.setMsgResponse(new MsgResponse("A0", "Merchant No. Error"));
             logger.warn("机构商户不匹配[{}]", req.getMsgInfo().toString());
         }
-        MsgInfo msgInfo = req.getMsgInfo();
-        msgInfo.setTimeStamp(DateUtil.getCurDateTime());
-        resp.setMsgInfo(msgInfo);
+        resp.getMsgInfo().setTimeStamp(DateUtil.getCurDateTime());
         // 响应信息签名
         signature.setSignature(SignUtil.sign(resp, privateKey));
         resp.setCertificateSignature(signature);
