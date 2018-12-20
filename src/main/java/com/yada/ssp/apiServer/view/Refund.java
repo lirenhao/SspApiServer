@@ -1,7 +1,6 @@
 package com.yada.ssp.apiServer.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
@@ -12,31 +11,24 @@ public class Refund extends TrxInfo {
 
     @NotEmpty
     @Pattern(regexp = "^\\d{1,12}$")
-    @JsonProperty("tranAmt")
-    private String tranAmt;
+    private String tranAmt; // 交易金额 单位:分
 
     @NotEmpty
-    @JsonProperty("ccyCode")
-    private String ccyCode;
+    private String ccyCode; // 交易币种
 
-    @JsonProperty("channelId")
-    private String channelId;
+    private String channelId; // 交易渠道
 
     @NotEmpty
     @Size(min = 24, max = 64)
-    @JsonProperty("merTraceNo")
-    private String merTraceNo;
+    private String merTraceNo; // 商户流水号
 
     @NotEmpty
     @Size(min = 24, max = 64)
-    @JsonProperty("originalMerTraceNo")
-    private String originalMerTraceNo;
+    private String originalMerTraceNo; // 原消费交易的商户流水号
 
-    @JsonProperty("bankLsNo")
-    private String bankLsNo;
+    private String bankLsNo; // 银行流水号
 
-    @JsonProperty("channelTraceNo")
-    private String channelTraceNo;
+    private String channelTraceNo; // 二维码渠道对应系统的流水号
 
     public String getTranAmt() {
         return tranAmt;

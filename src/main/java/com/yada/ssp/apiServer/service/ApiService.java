@@ -106,7 +106,7 @@ public class ApiService {
                 if ("00".equals(respMap.get("039"))) {
                     info.setBankLsNo(respMap.get("065"));
                     info.setPayLoad(respMap.get("066"));
-                    // TODO 超时时间
+                    info.setTimeout(respMap.get("067"));
                 } else {
                     logger.warn("获取付款码失败,返回码是[{}],提示信息是[{}]", respMap.get("039"), respMap.get("040"));
                 }
@@ -126,13 +126,67 @@ public class ApiService {
 
     public Response<Refund> refund(Request<Refund> req) {
         return handle(req, (info, resp) -> {
-            // TODO 与SSP交互
+            Map<String, String> reqMap = new HashMap<>();
+            reqMap.put("931", "05");
+            reqMap.put("004", info.getTranAmt());
+            reqMap.put("018", info.getCcyCode());
+            reqMap.put("041", info.getTerminalId());
+            reqMap.put("042", info.getMerchantId());
+            reqMap.put("068", info.getMerTraceNo());
+            reqMap.put("071", info.getOriginalMerTraceNo());
+            String reqStr = TlvPacker.packer(reqMap);
+            try {
+                logger.info("发起退货的请求报文是[{}]", reqStr);
+                ByteBuffer respBuffer = sspClient.send(ByteBuffer.wrap(reqStr.getBytes()));
+                Map<String, String> respMap = TlvPacker.unPacker(new String(respBuffer.array()));
+                resp.setMsgResponse(new MsgResponse(respMap.get("039"), respMap.get("040")));
+                if ("00".equals(respMap.get("039"))) {
+                    // TODO 确定退货返回值的key
+                    info.setChannelId(respMap.get(""));
+                    info.setBankLsNo(respMap.get(""));
+                    info.setChannelTraceNo(respMap.get(""));
+                } else {
+                    logger.warn("获取付款码失败,返回码是[{}],提示信息是[{}]", respMap.get("039"), respMap.get("040"));
+                }
+            } catch (IOException e) {
+                resp.setMsgResponse(new MsgResponse("91", "Issuer system error"));
+                logger.warn("发起退货异常,请求报文是[{}],异常信息是[{}]", reqStr, e.getMessage());
+            }
+            resp.setTrxInfo(info);
         });
     }
 
     public Response<Query> query(Request<Query> req) {
         return handle(req, (info, resp) -> {
-            // TODO 与SSP交互
+            Map<String, String> reqMap = new HashMap<>();
+            reqMap.put("931", "05");
+            reqMap.put("041", info.getTerminalId());
+            reqMap.put("042", info.getMerchantId());
+            reqMap.put("068", info.getMerTraceNo());
+            String reqStr = TlvPacker.packer(reqMap);
+            try {
+                logger.info("发起查询的请求报文是[{}]", reqStr);
+                ByteBuffer respBuffer = sspClient.send(ByteBuffer.wrap(reqStr.getBytes()));
+                Map<String, String> respMap = TlvPacker.unPacker(new String(respBuffer.array()));
+                resp.setMsgResponse(new MsgResponse(respMap.get("039"), respMap.get("040")));
+                if ("00".equals(respMap.get("039"))) {
+                    // TODO 确定查询返回值的key
+                    info.setTranAmt(respMap.get(""));
+                    info.setCcyCode(respMap.get(""));
+                    info.setChannelId(respMap.get(""));
+                    info.setOriginalMerTraceNo(respMap.get(""));
+                    info.setBankLsNo(respMap.get(""));
+                    info.setChannelTraceNo(respMap.get(""));
+                    info.setTrxRespCode(respMap.get(""));
+                    info.setTrxRespDesc(respMap.get(""));
+                } else {
+                    logger.warn("发起查询失败,返回码是[{}],提示信息是[{}]", respMap.get("039"), respMap.get("040"));
+                }
+            } catch (IOException e) {
+                resp.setMsgResponse(new MsgResponse("91", "Issuer system error"));
+                logger.warn("发起查询异常,请求报文是[{}],异常信息是[{}]", reqStr, e.getMessage());
+            }
+            resp.setTrxInfo(info);
         });
     }
 
