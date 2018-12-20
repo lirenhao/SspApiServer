@@ -93,17 +93,6 @@ public class ApiController {
     }
 
     /**
-     * 交易通知
-     *
-     * @param req 请求参数
-     * @return 响应参数
-     */
-    @PostMapping("/notify")
-    public Response<Notify> notify(@RequestBody @Validated Request<Notify> req) {
-        return apiService.notify(req);
-    }
-
-    /**
      * 批次交易查询
      *
      * @param req 请求参数

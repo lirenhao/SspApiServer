@@ -190,12 +190,6 @@ public class ApiService {
         });
     }
 
-    public Response<Notify> notify(Request<Notify> req) {
-        return handle(req, (info, resp) -> {
-            // TODO 与SSP交互
-        });
-    }
-
     public Response<BatchQuery> batchQuery(Request<BatchQuery> req) {
         return handle(req, (info, resp) -> {
             // TODO 与SSP交互
