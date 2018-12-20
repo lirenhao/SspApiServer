@@ -35,10 +35,13 @@ public class TlvPacker {
     public static String packer(Map<String, String> map) {
         StringBuilder sb = new StringBuilder();
         for (String key : map.keySet()) {
-            String len = StringUtils.leftPad(String.valueOf(map.get(key).length()), 4, "0");
-            sb.append(key);
-            sb.append(len);
-            sb.append(map.get(key));
+            String value = map.get(key);
+            if(value != null) {
+                String len = StringUtils.leftPad(String.valueOf(value.length()), 4, "0");
+                sb.append(key);
+                sb.append(len);
+                sb.append(value);
+            }
         }
         return sb.toString();
     }

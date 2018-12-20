@@ -3,7 +3,6 @@ package com.yada.ssp.apiServer.service;
 import com.yada.ssp.apiServer.dao.ApiOrgDao;
 import com.yada.ssp.apiServer.model.ApiOrg;
 import com.yada.ssp.apiServer.model.Merchant;
-import com.yada.ssp.apiServer.net.SspClient;
 import com.yada.ssp.apiServer.util.SignUtil;
 import com.yada.ssp.apiServer.view.*;
 import org.junit.Assert;
@@ -27,7 +26,7 @@ public class ApiServiceTest {
     @MockBean
     private ApiOrgDao apiOrgDao;
     @MockBean
-    private SspClient sspClient;
+    private SspService sspService;
     @Autowired
     private ApiService apiService;
 
