@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.math.BigInteger;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BatchSettle extends TrxInfo {
@@ -12,9 +13,9 @@ public class BatchSettle extends TrxInfo {
     @Size(min = 6, max = 6)
     private String batchNo; // 批次号
 
-    private String trxCount; // 交易总笔数
+    private int trxCount; // 交易总笔数
 
-    private String trxAmtSum; // 交易总金额
+    private BigInteger trxAmtSum; // 交易总金额
 
     public String getBatchNo() {
         return batchNo;
@@ -24,19 +25,19 @@ public class BatchSettle extends TrxInfo {
         this.batchNo = batchNo;
     }
 
-    public String getTrxCount() {
+    public int getTrxCount() {
         return trxCount;
     }
 
-    public void setTrxCount(String trxCount) {
+    public void setTrxCount(int trxCount) {
         this.trxCount = trxCount;
     }
 
-    public String getTrxAmtSum() {
+    public BigInteger getTrxAmtSum() {
         return trxAmtSum;
     }
 
-    public void setTrxAmtSum(String trxAmtSum) {
+    public void setTrxAmtSum(BigInteger trxAmtSum) {
         this.trxAmtSum = trxAmtSum;
     }
 }

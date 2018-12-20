@@ -4,6 +4,7 @@ import com.yada.ssp.apiServer.dao.ApiOrgDao;
 import com.yada.ssp.apiServer.model.ApiOrg;
 import com.yada.ssp.apiServer.model.Merchant;
 import com.yada.ssp.apiServer.net.SspClient;
+import com.yada.ssp.apiServer.util.DateUtil;
 import com.yada.ssp.apiServer.util.SignUtil;
 import com.yada.ssp.apiServer.util.TlvPacker;
 import com.yada.ssp.apiServer.view.*;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +47,6 @@ public class ApiService {
         signature.setSignature("00000000");
 
         Response<T> resp = new Response<>();
-        resp.setMsgInfo(req.getMsgInfo());
         resp.setCertificateSignature(signature);
 
         String sign = req.getCertificateSignature().getSignature();
@@ -68,6 +69,9 @@ public class ApiService {
             resp.setMsgResponse(new MsgResponse("A0", "Merchant No. Error"));
             logger.warn("机构商户不匹配[{}]", req.getMsgInfo().toString());
         }
+        MsgInfo msgInfo = req.getMsgInfo();
+        msgInfo.setTimeStamp(DateUtil.getCurDateTime());
+        resp.setMsgInfo(msgInfo);
         // 响应信息签名
         signature.setSignature(SignUtil.sign(resp, privateKey));
         resp.setCertificateSignature(signature);
@@ -90,8 +94,8 @@ public class ApiService {
         return handle(req, (info, resp) -> {
             Map<String, String> reqMap = new HashMap<>();
             reqMap.put("931", "01");
-            reqMap.put("004", info.getTranAmt());
-            reqMap.put("018", info.getCcyCode());
+            reqMap.put("004", info.getTranAmt().toString());
+            reqMap.put("018", info.getCcyCode() + "");
             reqMap.put("041", info.getTerminalId());
             reqMap.put("042", info.getMerchantId());
             reqMap.put("068", info.getMerTraceNo());
@@ -128,8 +132,8 @@ public class ApiService {
         return handle(req, (info, resp) -> {
             Map<String, String> reqMap = new HashMap<>();
             reqMap.put("931", "05");
-            reqMap.put("004", info.getTranAmt());
-            reqMap.put("018", info.getCcyCode());
+            reqMap.put("004", info.getTranAmt().toString());
+            reqMap.put("018", info.getCcyCode() + "");
             reqMap.put("041", info.getTerminalId());
             reqMap.put("042", info.getMerchantId());
             reqMap.put("068", info.getMerTraceNo());
@@ -171,8 +175,8 @@ public class ApiService {
                 resp.setMsgResponse(new MsgResponse(respMap.get("039"), respMap.get("040")));
                 if ("00".equals(respMap.get("039"))) {
                     // TODO 确定查询返回值的key
-                    info.setTranAmt(respMap.get(""));
-                    info.setCcyCode(respMap.get(""));
+                    info.setTranAmt(new BigInteger(respMap.get("")));
+                    info.setCcyCode(Integer.parseInt(respMap.get("")));
                     info.setChannelId(respMap.get(""));
                     info.setOriginalMerTraceNo(respMap.get(""));
                     info.setBankLsNo(respMap.get(""));

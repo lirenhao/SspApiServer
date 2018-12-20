@@ -2,19 +2,19 @@ package com.yada.ssp.apiServer.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
+import java.math.BigInteger;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ScanPay extends TrxInfo {
 
-    @NotEmpty
-    @Pattern(regexp = "^\\d{1,12}$")
-    private String tranAmt; // 交易金额 单位:分
+    @NotNull
+    @Digits(integer = 12, fraction = 0)
+    private BigInteger tranAmt; // 交易金额 单位:分
 
-    @NotEmpty
-    private String ccyCode; // 交易币种
+    @NotNull
+    @Digits(integer = 3, fraction = 0)
+    private int ccyCode; // 交易币种
 
     private String channelId; // 交易渠道
 
@@ -32,19 +32,19 @@ public class ScanPay extends TrxInfo {
 
     private String channelTraceNo; // 二维码渠道对应系统的流水号
 
-    public String getTranAmt() {
+    public BigInteger getTranAmt() {
         return tranAmt;
     }
 
-    public void setTranAmt(String tranAmt) {
+    public void setTranAmt(BigInteger tranAmt) {
         this.tranAmt = tranAmt;
     }
 
-    public String getCcyCode() {
+    public int getCcyCode() {
         return ccyCode;
     }
 
-    public void setCcyCode(String ccyCode) {
+    public void setCcyCode(int ccyCode) {
         this.ccyCode = ccyCode;
     }
 
