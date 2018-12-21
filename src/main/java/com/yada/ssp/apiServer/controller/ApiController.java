@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @RestController
 public class ApiController {
 
@@ -103,7 +106,21 @@ public class ApiController {
         return apiService.batchQuery(req);
     }
 
-    // TODO 对账文件获取
+
+    /**
+     * 对账文件获取
+     *
+     * @param req  请求参数
+     * @param resp HttpServletResponse
+     * @throws IOException I/O异常
+     */
+    @PostMapping("/accountFile")
+    public void batchQuery(@RequestBody @Validated Request<AccountFile> req, HttpServletResponse resp) throws IOException {
+        resp.setHeader("Pragma", "No-cache");
+        resp.setHeader("Cache-Control", "no-cache");
+        resp.setDateHeader("Expires", 0);
+        resp.getOutputStream().flush();
+    }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity validException(MethodArgumentNotValidException e) {

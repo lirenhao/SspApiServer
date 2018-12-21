@@ -1,21 +1,25 @@
 package com.yada.ssp.apiServer.view;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class TrxInfo {
-
-    @NotEmpty
-    @Size(min = 15, max = 15)
-    private String merchantId; // 商户号
+public class AccountFile extends TrxInfo {
 
     @NotEmpty
     @Size(min = 8, max = 8)
+    private String settleDate; // 清算日期YYYYMMDD
+
+    private String merchantId; // 商户号
+
     private String terminalId; // 终端号
+
+    public String getSettleDate() {
+        return settleDate;
+    }
+
+    public void setSettleDate(String settleDate) {
+        this.settleDate = settleDate;
+    }
 
     public String getMerchantId() {
         return merchantId;

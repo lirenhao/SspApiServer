@@ -1,6 +1,5 @@
 package com.yada.ssp.apiServer.view;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.validation.Valid;
@@ -9,15 +8,12 @@ import javax.validation.Valid;
 public class Request <T extends TrxInfo> {
 
     @Valid
-    @JsonProperty("msgInfo")
     private MsgInfo msgInfo;
 
     @Valid
-    @JsonProperty("trxInfo")
     private T trxInfo;
 
     @Valid
-    @JsonProperty("certificateSignature")
     private CertificateSignature certificateSignature;
 
     public MsgInfo getMsgInfo() {

@@ -17,10 +17,6 @@ public class MsgInfo {
     private String timeStamp; // 时间戳
 
     @NotEmpty
-    @JsonProperty("tranId")
-    private String tranId; // 交易类型ID
-
-    @NotEmpty
     @JsonProperty("orgId")
     private String orgId; // 机构ID
 
@@ -38,14 +34,6 @@ public class MsgInfo {
 
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
-    }
-
-    public String getTranId() {
-        return tranId;
-    }
-
-    public void setTranId(String tranId) {
-        this.tranId = tranId;
     }
 
     public String getOrgId() {
