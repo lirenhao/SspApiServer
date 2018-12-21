@@ -109,8 +109,8 @@ public class ApiController {
         return apiService.batchQuery(dataToReq(data));
     }
 
-
     private <T extends Request> T dataToReq(String data) throws IOException {
+        logger.info("商户的请求报文[{}]", data);
         T req = objectMapper.readValue(data, new TypeReference<T>() {
         });
         req.setData(data);
