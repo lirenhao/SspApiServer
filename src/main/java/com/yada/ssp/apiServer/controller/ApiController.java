@@ -29,14 +29,14 @@ public class ApiController {
     }
 
     /**
-     * 手动更新批次
+     * 获取当前批次号
      *
      * @param req 请求参数
      * @return 响应参数
      */
-    @PostMapping("/updateBatch")
-    public Response<UpdateBatch> updateBatch(@RequestBody @Validated Request<UpdateBatch> req) {
-        return apiService.updateBatch(req);
+    @PostMapping("/batchNo")
+    public Response<BatchNo> batchNo(@RequestBody @Validated Request<BatchNo> req) {
+        return apiService.batchNo(req);
     }
 
     /**

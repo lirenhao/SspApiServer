@@ -70,7 +70,7 @@ public class ApiService {
         return resp;
     }
 
-    public Response<UpdateBatch> updateBatch(Request<UpdateBatch> req) {
+    public Response<BatchNo> batchNo(Request<BatchNo> req) {
         return handle(req, (info, resp) -> {
             // TODO 与SSP交互
         });
