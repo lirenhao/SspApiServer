@@ -1,5 +1,6 @@
 package com.yada.ssp.apiServer.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yada.ssp.apiServer.dao.ApiOrgDao;
 import com.yada.ssp.apiServer.model.ApiOrg;
 import com.yada.ssp.apiServer.model.Merchant;
@@ -30,16 +31,17 @@ public class ApiServiceTest {
     @Autowired
     private ApiService apiService;
 
+    private ApiService.Callback<ApiTest> callback = (info, resp) -> {
+        Assert.assertEquals("00000000", resp.getCertificateSignature().getSignature());
+        Assert.assertNull(resp.getTrxInfo());
+
+        resp.setTrxInfo(info);
+        resp.setMsgResponse(new MsgResponse("00", "Approved"));
+    };
+
     @Test
-    public void handle() {
-        ApiOrg orgKey = new ApiOrg();
-        orgKey.setOrgId("0001");
-        orgKey.setPublicKey(publicKey);
-        Merchant mer = new Merchant();
-        mer.setMerNo("123456789012345");
-        orgKey.getMerchants().add(mer);
-        Mockito.when(apiOrgDao.findById(Mockito.anyString()))
-                .thenReturn(Optional.empty()).thenReturn(Optional.of(orgKey));
+    public void testHandleNotKey() throws JsonProcessingException {
+        Mockito.when(apiOrgDao.findById(Mockito.anyString())).thenReturn(Optional.empty());
 
         CertificateSignature certSign = new CertificateSignature();
         certSign.setSignature("00000000");
@@ -53,52 +55,94 @@ public class ApiServiceTest {
         trxInfo.setMerchantId("123456789012345");
         req.setTrxInfo(trxInfo);
 
-        ApiService.Callback<ApiTest> callback = (info, resp) -> {
-            Assert.assertEquals(trxInfo, info);
-            Assert.assertEquals(msgInfo, resp.getMsgInfo());
-            Assert.assertEquals("00000000", resp.getCertificateSignature().getSignature());
-            Assert.assertNull(resp.getTrxInfo());
+        req.setCertificateSignature(certSign);
+        CertificateSignature reqSign = new CertificateSignature();
+        reqSign.setSignature(SignUtil.sign(req, privateKey));
+        req.setCertificateSignature(reqSign);
+        req.setData(SignUtil.objToJson(req));
 
-            resp.setTrxInfo(info);
-            resp.setMsgResponse(new MsgResponse("00", "Approved"));
-        };
+        Response<ApiTest> resp = apiService.handle(req, callback);
+        Assert.assertEquals(msgInfo, resp.getMsgInfo());
+        Assert.assertEquals(trxInfo, resp.getTrxInfo());
+        Assert.assertEquals("A0", resp.getMsgResponse().getRespCode());
+        Assert.assertEquals("Merchant No. Error", resp.getMsgResponse().getRespDesc());
+        String respSign = resp.getCertificateSignature().getSignature();
+        resp.setCertificateSignature(certSign);
+        Assert.assertTrue(SignUtil.verify(resp, respSign, publicKey));
+    }
+
+    @Test
+    public void testHandleVerifyFailed() throws JsonProcessingException {
+        ApiOrg orgKey = new ApiOrg();
+        orgKey.setOrgId("0001");
+        orgKey.setPublicKey(publicKey);
+        Merchant mer = new Merchant();
+        mer.setMerNo("123456789012345");
+        orgKey.getMerchants().add(mer);
+        Mockito.when(apiOrgDao.findById(Mockito.anyString())).thenReturn(Optional.of(orgKey));
+
+        CertificateSignature certSign = new CertificateSignature();
+        certSign.setSignature("00000000");
+
+        Request<ApiTest> req = new Request<>();
+        MsgInfo msgInfo = new MsgInfo();
+        msgInfo.setOrgId("0001");
+        req.setMsgInfo(msgInfo);
+
+        ApiTest trxInfo = new ApiTest();
+        trxInfo.setMerchantId("123456789012345");
+        req.setTrxInfo(trxInfo);
+
+        CertificateSignature reqSign = new CertificateSignature();
+        reqSign.setSignature(SignUtil.sign(req, privateKey));
+        req.setCertificateSignature(reqSign);
+        req.setData(SignUtil.objToJson(req));
+
+        Response<ApiTest> resp = apiService.handle(req, callback);
+        Assert.assertEquals(msgInfo, resp.getMsgInfo());
+        Assert.assertEquals(trxInfo, resp.getTrxInfo());
+        Assert.assertEquals("A0", resp.getMsgResponse().getRespCode());
+        Assert.assertEquals("Signature verification failed", resp.getMsgResponse().getRespDesc());
+        String respSign = resp.getCertificateSignature().getSignature();
+        resp.setCertificateSignature(certSign);
+        Assert.assertTrue(SignUtil.verify(resp, respSign, publicKey));
+    }
+
+    @Test
+    public void testHandleSuccess() throws JsonProcessingException {
+        ApiOrg orgKey = new ApiOrg();
+        orgKey.setOrgId("0001");
+        orgKey.setPublicKey(publicKey);
+        Merchant mer = new Merchant();
+        mer.setMerNo("123456789012345");
+        orgKey.getMerchants().add(mer);
+        Mockito.when(apiOrgDao.findById(Mockito.anyString())).thenReturn(Optional.of(orgKey));
+
+        CertificateSignature certSign = new CertificateSignature();
+        certSign.setSignature("00000000");
+
+        Request<ApiTest> req = new Request<>();
+        MsgInfo msgInfo = new MsgInfo();
+        msgInfo.setOrgId("0001");
+        req.setMsgInfo(msgInfo);
+
+        ApiTest trxInfo = new ApiTest();
+        trxInfo.setMerchantId("123456789012345");
+        req.setTrxInfo(trxInfo);
 
         req.setCertificateSignature(certSign);
-        CertificateSignature req1Sign = new CertificateSignature();
-        req1Sign.setSignature(SignUtil.sign(req, privateKey));
-        req.setCertificateSignature(req1Sign);
+        CertificateSignature reqSign = new CertificateSignature();
+        reqSign.setSignature(SignUtil.sign(req, privateKey));
+        req.setCertificateSignature(reqSign);
+        req.setData(SignUtil.objToJson(req));
 
-        Response<ApiTest> resp1 = apiService.handle(req, callback);
-        Assert.assertEquals(msgInfo, resp1.getMsgInfo());
-        Assert.assertEquals(trxInfo, resp1.getTrxInfo());
-        Assert.assertEquals("A0", resp1.getMsgResponse().getRespCode());
-        Assert.assertEquals("Merchant No. Error", resp1.getMsgResponse().getRespDesc());
-        String resp1Sign = resp1.getCertificateSignature().getSignature();
-        resp1.setCertificateSignature(certSign);
-        Assert.assertTrue(SignUtil.verify(resp1, resp1Sign, publicKey));
-
-        // 验签失败
-        Response<ApiTest> resp2 = apiService.handle(req, callback);
-        Assert.assertEquals(msgInfo, resp2.getMsgInfo());
-        Assert.assertEquals(trxInfo, resp2.getTrxInfo());
-        Assert.assertEquals("A0", resp2.getMsgResponse().getRespCode());
-        Assert.assertEquals("Signature verification fails", resp2.getMsgResponse().getRespDesc());
-        String resp2Sign = resp2.getCertificateSignature().getSignature();
-        resp2.setCertificateSignature(certSign);
-        Assert.assertTrue(SignUtil.verify(resp2, resp2Sign, publicKey));
-
-        req.setCertificateSignature(certSign);
-        CertificateSignature req3Sign = new CertificateSignature();
-        req3Sign.setSignature(SignUtil.sign(req, privateKey));
-        req.setCertificateSignature(req3Sign);
-        // 验签成功
-        Response<ApiTest> resp3 = apiService.handle(req, callback);
-        Assert.assertEquals(msgInfo, resp3.getMsgInfo());
-        Assert.assertEquals(trxInfo, resp3.getTrxInfo());
-        Assert.assertEquals("00", resp3.getMsgResponse().getRespCode());
-        Assert.assertEquals("Approved", resp3.getMsgResponse().getRespDesc());
-        String resp3Sign = resp3.getCertificateSignature().getSignature();
-        resp3.setCertificateSignature(certSign);
-        Assert.assertTrue(SignUtil.verify(resp3, resp3Sign, publicKey));
+        Response<ApiTest> resp = apiService.handle(req, callback);
+        Assert.assertEquals(msgInfo, resp.getMsgInfo());
+        Assert.assertEquals(trxInfo, resp.getTrxInfo());
+        Assert.assertEquals("00", resp.getMsgResponse().getRespCode());
+        Assert.assertEquals("Approved", resp.getMsgResponse().getRespDesc());
+        String respSign = resp.getCertificateSignature().getSignature();
+        resp.setCertificateSignature(certSign);
+        Assert.assertTrue(SignUtil.verify(resp, respSign, publicKey));
     }
 }

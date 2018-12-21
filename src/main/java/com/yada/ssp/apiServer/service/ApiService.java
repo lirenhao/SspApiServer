@@ -11,10 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @Service
+@Validated
 public class ApiService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -43,19 +46,18 @@ public class ApiService {
         resp.setMsgInfo(req.getMsgInfo());
         resp.setCertificateSignature(signature);
 
-        String sign = req.getCertificateSignature().getSignature();
-        // 在signature标签填充“00000000”
-        req.setCertificateSignature(signature);
-
         ApiOrg apiOrg = apiOrgDao.findById(req.getMsgInfo().getOrgId()).orElse(new ApiOrg());
         if (apiOrg.getMerchants().stream().map(Merchant::getMerNo).collect(Collectors.toSet()).contains(req.getTrxInfo().getMerchantId())) {
+            String sign = req.getCertificateSignature().getSignature();
+            // 在signature标签填充“00000000”
+            String data = req.getData().replace(sign, "00000000");
             // 请求信息验签
-            if (apiOrg.getPublicKey() != null && SignUtil.verify(req, sign, apiOrg.getPublicKey())) {
+            if (apiOrg.getPublicKey() != null && SignUtil.verify(data, sign, apiOrg.getPublicKey())) {
                 // 回调处理
                 callback.handle(req.getTrxInfo(), resp);
             } else {
                 resp.setTrxInfo(req.getTrxInfo());
-                resp.setMsgResponse(new MsgResponse("A0", "Signature verification fails"));
+                resp.setMsgResponse(new MsgResponse("A0", "Signature verification failed"));
                 logger.warn("交易[{}]验签失败", req.getMsgInfo().toString());
             }
         } else {
@@ -70,37 +72,37 @@ public class ApiService {
         return resp;
     }
 
-    public Response<BatchNo> batchNo(Request<BatchNo> req) {
+    public Response<BatchNo> batchNo(@Valid Request<BatchNo> req) {
         return handle(req, (info, resp) -> {
             // TODO 与SSP交互
         });
     }
 
-    public Response<BatchSettle> batchSettle(Request<BatchSettle> req) {
+    public Response<BatchSettle> batchSettle(@Valid Request<BatchSettle> req) {
         return handle(req, (info, resp) -> {
             // TODO 与SSP交互
         });
     }
 
-    public Response<QrCode> qrCode(Request<QrCode> req) {
+    public Response<QrCode> qrCode(@Valid Request<QrCode> req) {
         return handle(req, sspService::qrCode);
     }
 
-    public Response<ScanPay> scanPay(Request<ScanPay> req) {
+    public Response<ScanPay> scanPay(@Valid Request<ScanPay> req) {
         return handle(req, (info, resp) -> {
             // TODO 与SSP交互
         });
     }
 
-    public Response<Refund> refund(Request<Refund> req) {
+    public Response<Refund> refund(@Valid Request<Refund> req) {
         return handle(req, sspService::refund);
     }
 
-    public Response<Query> query(Request<Query> req) {
+    public Response<Query> query(@Valid Request<Query> req) {
         return handle(req, sspService::query);
     }
 
-    public Response<BatchQuery> batchQuery(Request<BatchQuery> req) {
+    public Response<BatchQuery> batchQuery(@Valid Request<BatchQuery> req) {
         return handle(req, (info, resp) -> {
             // TODO 与SSP交互
         });

@@ -1,5 +1,7 @@
 package com.yada.ssp.apiServer.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yada.ssp.apiServer.service.ApiService;
 import com.yada.ssp.apiServer.view.*;
 import org.slf4j.Logger;
@@ -7,19 +9,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 
 @RestController
 public class ApiController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     private final ApiService apiService;
 
@@ -31,81 +34,88 @@ public class ApiController {
     /**
      * 获取当前批次号
      *
-     * @param req 请求参数
+     * @param data 数据
      * @return 响应参数
      */
     @PostMapping("/batchNo")
-    public Response<BatchNo> batchNo(@RequestBody @Validated Request<BatchNo> req) {
-        return apiService.batchNo(req);
+    public Response<BatchNo> batchNo(@RequestBody String data) throws IOException {
+        return apiService.batchNo(dataToReq(data));
     }
 
     /**
      * 批次结算
      *
-     * @param req 请求参数
+     * @param data 请求参数
      * @return 响应参数
      */
     @PostMapping("/batchSettle")
-    public Response<BatchSettle> batchSettle(@RequestBody @Validated Request<BatchSettle> req) {
-        return apiService.batchSettle(req);
+    public Response<BatchSettle> batchSettle(@RequestBody String data) throws IOException {
+        return apiService.batchSettle(dataToReq(data));
     }
 
     /**
      * 动态码获取
      *
-     * @param req 请求参数
+     * @param data 请求参数
      * @return 响应参数
      */
     @PostMapping("/qrCode")
-    public Response<QrCode> qrCode(@RequestBody @Validated Request<QrCode> req) {
-        return apiService.qrCode(req);
+    public Response<QrCode> qrCode(@RequestBody String data) throws IOException {
+        return apiService.qrCode(dataToReq(data));
     }
 
 
     /**
      * 反扫支付
      *
-     * @param req 请求参数
+     * @param data 请求参数
      * @return 响应参数
      */
     @PostMapping("/scanPay")
-    public Response<ScanPay> scanPay(@RequestBody @Validated Request<ScanPay> req) {
-        return apiService.scanPay(req);
+    public Response<ScanPay> scanPay(@RequestBody String data) throws IOException {
+        return apiService.scanPay(dataToReq(data));
     }
 
     /**
      * 退货
      *
-     * @param req 请求参数
+     * @param data 请求参数
      * @return 响应参数
      */
     @PostMapping("/refund")
-    public Response<Refund> refund(@RequestBody @Validated Request<Refund> req) {
-        return apiService.refund(req);
+    public Response<Refund> refund(@RequestBody String data) throws IOException {
+        return apiService.refund(dataToReq(data));
     }
 
     /**
      * 交易查询
      *
-     * @param req 请求参数
+     * @param data 请求参数
      * @return 响应参数
      */
     @PostMapping("/query")
-    public Response<Query> query(@RequestBody @Validated Request<Query> req) {
-        return apiService.query(req);
+    public Response<Query> query(@RequestBody String data) throws IOException {
+        return apiService.query(dataToReq(data));
     }
 
     /**
      * 批次交易查询
      *
-     * @param req 请求参数
+     * @param data 请求参数
      * @return 响应参数
      */
     @PostMapping("/batchQuery")
-    public Response<BatchQuery> batchQuery(@RequestBody @Validated Request<BatchQuery> req) {
-        return apiService.batchQuery(req);
+    public Response<BatchQuery> batchQuery(@RequestBody String data) throws IOException {
+        return apiService.batchQuery(dataToReq(data));
     }
 
+
+    private <T extends Request> T dataToReq(String data) throws IOException {
+        T req = objectMapper.readValue(data, new TypeReference<T>() {
+        });
+        req.setData(data);
+        return req;
+    }
 
     /**
      * 对账文件获取
@@ -122,9 +132,15 @@ public class ApiController {
         resp.getOutputStream().flush();
     }
 
-    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
-    public ResponseEntity validException(MethodArgumentNotValidException e) {
+    @ExceptionHandler(value = {ConstraintViolationException.class})
+    public ResponseEntity validException(ConstraintViolationException e) {
         logger.warn("接口参数错误,错误信息[{}]", e.getMessage());
         return ResponseEntity.badRequest().body("接口参数校验失败");
+    }
+
+    @ExceptionHandler(value = {IOException.class})
+    public ResponseEntity toJsonException(IOException e) {
+        logger.warn("参数格式错误,错误信息[{}]", e.getMessage());
+        return ResponseEntity.badRequest().body("参数必须是JSON格式");
     }
 }

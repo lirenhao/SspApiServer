@@ -1,11 +1,13 @@
 package com.yada.ssp.apiServer.view;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class Request <T extends TrxInfo> {
+public class Request<T extends TrxInfo> {
 
     @Valid
     private MsgInfo msgInfo;
@@ -15,6 +17,10 @@ public class Request <T extends TrxInfo> {
 
     @Valid
     private CertificateSignature certificateSignature;
+
+    @JsonIgnore
+    @NotEmpty
+    private String data; // 原始报文
 
     public MsgInfo getMsgInfo() {
         return msgInfo;
@@ -38,5 +44,13 @@ public class Request <T extends TrxInfo> {
 
     public void setCertificateSignature(CertificateSignature certificateSignature) {
         this.certificateSignature = certificateSignature;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 }
