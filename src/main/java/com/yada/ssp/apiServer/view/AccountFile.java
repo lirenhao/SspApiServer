@@ -1,7 +1,10 @@
 package com.yada.ssp.apiServer.view;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 public class AccountFile extends TrxInfo {
 
@@ -9,9 +12,8 @@ public class AccountFile extends TrxInfo {
     @Size(min = 8, max = 8)
     private String settleDate; // 清算日期YYYYMMDD
 
-    private String merchantId; // 商户号
-
-    private String terminalId; // 终端号
+    @JsonIgnore
+    private List<AccInfoDetail> accInfoDetails;
 
     public String getSettleDate() {
         return settleDate;
@@ -21,19 +23,11 @@ public class AccountFile extends TrxInfo {
         this.settleDate = settleDate;
     }
 
-    public String getMerchantId() {
-        return merchantId;
+    public List<AccInfoDetail> getAccInfoDetails() {
+        return accInfoDetails;
     }
 
-    public void setMerchantId(String merchantId) {
-        this.merchantId = merchantId;
-    }
-
-    public String getTerminalId() {
-        return terminalId;
-    }
-
-    public void setTerminalId(String terminalId) {
-        this.terminalId = terminalId;
+    public void setAccInfoDetails(List<AccInfoDetail> accInfoDetails) {
+        this.accInfoDetails = accInfoDetails;
     }
 }

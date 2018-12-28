@@ -72,10 +72,9 @@ public class SspService {
             Map<String, String> respMap = TlvPacker.unPacker(new String(respBuffer.array()));
             resp.setMsgResponse(new MsgResponse(respMap.get("039"), respMap.get("040")));
             if ("00".equals(respMap.get("039"))) {
-                // TODO 确定退货返回值的key
-                info.setChannelId(respMap.get(""));
-                info.setBankLsNo(respMap.get(""));
-                info.setChannelTraceNo(respMap.get(""));
+                info.setChannelId(respMap.get("070"));
+                info.setBankLsNo(respMap.get("065"));
+                info.setChannelTraceNo(respMap.get("069"));
             } else {
                 logger.warn("获取付款码失败,返回码是[{}],提示信息是[{}]", respMap.get("039"), respMap.get("040"));
             }

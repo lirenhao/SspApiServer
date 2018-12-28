@@ -47,7 +47,9 @@ public class ApiService {
         resp.setCertificateSignature(signature);
 
         ApiOrg apiOrg = apiOrgDao.findById(req.getMsgInfo().getOrgId()).orElse(new ApiOrg());
-        if (apiOrg.getMerchants().stream().map(Merchant::getMerNo).collect(Collectors.toSet()).contains(req.getTrxInfo().getMerchantId())) {
+        if (req.getTrxInfo() instanceof AccountFile ||
+                apiOrg.getMerchants().stream().map(Merchant::getMerNo).collect(Collectors.toSet())
+                        .contains(req.getTrxInfo().getMerchantId())) {
             String sign = req.getCertificateSignature().getSignature();
             // 在signature标签填充“00000000”
             String data = req.getData().replace(sign, "00000000");
@@ -105,6 +107,12 @@ public class ApiService {
     public Response<BatchQuery> batchQuery(@Valid Request<BatchQuery> req) {
         return handle(req, (info, resp) -> {
             // TODO 与SSP交互
+        });
+    }
+
+    public Response<AccountFile> accountFile(@Valid Request<AccountFile> req) {
+        return handle(req, (info, resp) -> {
+            // TODO 获取对账数据
         });
     }
 }

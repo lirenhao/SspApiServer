@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -109,27 +108,29 @@ public class ApiController {
         return apiService.batchQuery(dataToReq(data));
     }
 
-    private <T extends Request> T dataToReq(String data) throws IOException {
-        logger.info("商户的请求报文[{}]", data);
-        T req = objectMapper.readValue(data, new TypeReference<T>() {
-        });
-        req.setData(data);
-        return req;
-    }
-
     /**
      * 对账文件获取
      *
-     * @param req  请求参数
-     * @param resp HttpServletResponse
+     * @param data     请求参数
+     * @param response HttpServletResponse
      * @throws IOException I/O异常
      */
     @PostMapping("/accountFile")
-    public void batchQuery(@RequestBody @Validated Request<AccountFile> req, HttpServletResponse resp) throws IOException {
-        resp.setHeader("Pragma", "No-cache");
-        resp.setHeader("Cache-Control", "no-cache");
-        resp.setDateHeader("Expires", 0);
-        resp.getOutputStream().flush();
+    public void accountFile(@RequestBody String data, HttpServletResponse response) throws IOException {
+        Request<AccountFile> req = dataToReq(data);
+        // 为了数据校验能通过
+        req.getTrxInfo().setMerchantId("123456789012345");
+        req.getTrxInfo().setTerminalId("12345678");
+        Response resp = apiService.accountFile(req);
+
+        if ("00".equals(resp.getMsgResponse().getRespCode())) {
+            // TODO 生成对账文件
+            response.setHeader("Pragma", "No-cache");
+            response.setHeader("Cache-Control", "no-cache");
+            response.setDateHeader("Expires", 0);
+        } else {
+            // TODO 数据获取失败如何处理
+        }
     }
 
     @ExceptionHandler(value = {ConstraintViolationException.class})
@@ -142,5 +143,13 @@ public class ApiController {
     public ResponseEntity toJsonException(IOException e) {
         logger.warn("参数格式错误,错误信息[{}]", e.getMessage());
         return ResponseEntity.badRequest().body("参数必须是JSON格式");
+    }
+
+    private <T extends Request> T dataToReq(String data) throws IOException {
+        logger.info("商户的请求报文[{}]", data);
+        T req = objectMapper.readValue(data, new TypeReference<T>() {
+        });
+        req.setData(data);
+        return req;
     }
 }
