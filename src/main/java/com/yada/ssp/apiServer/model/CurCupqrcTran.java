@@ -1,20 +1,33 @@
 package com.yada.ssp.apiServer.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-@Table(name = "T_B_TERMINAL_BATCH")
-@IdClass(TermBatchPK.class)
-public class TermBatch {
+@Table(name = "T_L_CUR_CUPQRC_TRAN_LIST")
+public class CurCupqrcTran {
 
     @Id
     @Column
+    private String lsId;
+    @Column
     private String merchantId;
-    @Id
     @Column
     private String terminalId;
     @Column
     private String batchNo;
+    @Column
+    private String localSettleDate;
+
+    public String getLsId() {
+        return lsId;
+    }
+
+    public void setLsId(String lsId) {
+        this.lsId = lsId;
+    }
 
     public String getMerchantId() {
         return merchantId;
@@ -38,5 +51,13 @@ public class TermBatch {
 
     public void setBatchNo(String batchNo) {
         this.batchNo = batchNo;
+    }
+
+    public String getLocalSettleDate() {
+        return localSettleDate;
+    }
+
+    public void setLocalSettleDate(String localSettleDate) {
+        this.localSettleDate = localSettleDate;
     }
 }

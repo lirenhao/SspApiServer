@@ -4,7 +4,8 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "T_B_MERAPI_ORG")
+@Entity
+@Table(name = "T_B_MERAPI_ORG")
 public class ApiOrg {
 
     @Id

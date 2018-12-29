@@ -81,9 +81,7 @@ public class ApiService {
     }
 
     public Response<BatchSettle> batchSettle(@Valid Request<BatchSettle> req) {
-        return handle(req, (info, resp) -> {
-            // TODO 与SSP交互
-        });
+        return handle(req, batchService::batchSettle);
     }
 
     public Response<QrCode> qrCode(@Valid Request<QrCode> req) {
@@ -105,9 +103,7 @@ public class ApiService {
     }
 
     public Response<BatchQuery> batchQuery(@Valid Request<BatchQuery> req) {
-        return handle(req, (info, resp) -> {
-            // TODO 与SSP交互
-        });
+        return handle(req, batchService::batchTranQuery);
     }
 
     public Response<AccountFile> accountFile(@Valid Request<AccountFile> req) {
