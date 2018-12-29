@@ -39,6 +39,8 @@ public class CurCupSuccess {
     private String channelTraceNo;
     @Column
     private String debcreFlag;
+    @Column
+    private String channelId;
 
     public String getLsId() {
         return lsId;
@@ -150,5 +152,13 @@ public class CurCupSuccess {
 
     public void setDebcreFlag(String debcreFlag) {
         this.debcreFlag = debcreFlag;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 }

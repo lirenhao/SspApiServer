@@ -3,13 +3,20 @@ package com.yada.ssp.apiServer.view;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class TrxInfoDetail {
 
     private BigInteger tranAmt; // 交易金额 单位:分
 
-    private int ccyCode; // 交易币种
+    private String ccyCode; // 交易币种
+
+    private List<DiscountDetail> discountDetails; // 优惠信息
+
+    private BigInteger originalAmt; // 机构金额
+
+    private BigInteger costAmt; // 成本金额
 
     private String channelId; // 交易渠道
 
@@ -29,12 +36,36 @@ public class TrxInfoDetail {
         this.tranAmt = tranAmt;
     }
 
-    public int getCcyCode() {
+    public String getCcyCode() {
         return ccyCode;
     }
 
-    public void setCcyCode(int ccyCode) {
+    public void setCcyCode(String ccyCode) {
         this.ccyCode = ccyCode;
+    }
+
+    public List<DiscountDetail> getDiscountDetails() {
+        return discountDetails;
+    }
+
+    public void setDiscountDetails(List<DiscountDetail> discountDetails) {
+        this.discountDetails = discountDetails;
+    }
+
+    public BigInteger getOriginalAmt() {
+        return originalAmt;
+    }
+
+    public void setOriginalAmt(BigInteger originalAmt) {
+        this.originalAmt = originalAmt;
+    }
+
+    public BigInteger getCostAmt() {
+        return costAmt;
+    }
+
+    public void setCostAmt(BigInteger costAmt) {
+        this.costAmt = costAmt;
     }
 
     public String getChannelId() {

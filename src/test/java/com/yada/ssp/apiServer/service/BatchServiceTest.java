@@ -19,8 +19,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = BatchService.class)
@@ -121,8 +121,8 @@ public class BatchServiceTest {
         Response<BatchSettle> resp = new Response<>();
         batchService.batchSettle(batchSettle, resp);
 
-        Assert.assertEquals("91", resp.getMsgResponse().getRespCode());
-        Assert.assertEquals("Issuer system error", resp.getMsgResponse().getRespDesc());
+        Assert.assertEquals("12", resp.getMsgResponse().getRespCode());
+        Assert.assertEquals("Invalid transaction", resp.getMsgResponse().getRespDesc());
     }
 
     @Test

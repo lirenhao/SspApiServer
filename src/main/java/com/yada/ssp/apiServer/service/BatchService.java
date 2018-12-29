@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -74,7 +76,7 @@ public class BatchService {
                 queryBatchSettle(info);
                 resp.setMsgResponse(new MsgResponse("00", "Approved"));
             } else { // 未来的批次
-                resp.setMsgResponse(new MsgResponse("91", "Issuer system error"));
+                resp.setMsgResponse(new MsgResponse("12", "Invalid transaction"));
                 logger.warn("商户[{}]和终端[{}]的批次号[{}]大于当前批次号[{}]",
                         info.getMerchantId(), info.getTerminalId(), info.getBatchNo(), termBatch.getBatchNo());
             }
@@ -95,7 +97,7 @@ public class BatchService {
         curCupqrcTranDao.updateSettleDate(settleDate, termBatch.getMerchantId(),
                 termBatch.getTerminalId(), termBatch.getBatchNo());
         // TODO 如何更新批次号
-        termBatchDao.updateBatchNo(termBatch.getBatchNo(),
+        termBatchDao.updateBatchNo(termBatch.getBatchNo() + 1,
                 termBatch.getMerchantId(), termBatch.getTerminalId());
     }
 
@@ -139,6 +141,50 @@ public class BatchService {
      * @param resp 返回信息报文
      */
     void batchTranQuery(BatchQuery info, Response<BatchQuery> resp) {
+        TermBatch termBatch = termBatchDao
+                .findById(new TermBatchPK(info.getMerchantId(), info.getTerminalId())).orElse(null);
+        if (termBatch != null) {
+            if (null != info.getBatchNo() && !"".equals(info.getBatchNo())
+                    && termBatch.getBatchNo().compareTo(info.getBatchNo()) < 0) { // 未来的批次
+                resp.setMsgResponse(new MsgResponse("12", "Invalid transaction"));
+                logger.warn("商户[{}]和终端[{}]的批次号[{}]大于当前批次号[{}]",
+                        info.getMerchantId(), info.getTerminalId(), info.getBatchNo(), termBatch.getBatchNo());
+            } else {
+                queryBatchTran(info, termBatch.getBatchNo());
+                resp.setMsgResponse(new MsgResponse("00", "Approved"));
+            }
+        } else {
+            resp.setMsgResponse(new MsgResponse("91", "Issuer system error"));
+            logger.warn("没有查询到商户[{}]和终端[{}]的批次号", info.getMerchantId(), info.getTerminalId());
+        }
+        resp.setTrxInfo(info);
+    }
 
+    /**
+     * @param info    批次查询参数
+     * @param batchNo 当前批次号
+     */
+    void queryBatchTran(BatchQuery info, String batchNo) {
+        List<CurCupSuccess> list = curCupSuccessDao.findByMerchantIdAndTerminalIdAndBatchNo(
+                info.getMerchantId(), info.getTerminalId(),
+                (null != info.getBatchNo() && !"".equals(info.getBatchNo())) ? info.getBatchNo() : batchNo);
+        info.setTrxInfoDetail(list.stream().map(this::ccsToTid).collect(Collectors.toList()));
+    }
+
+    private TrxInfoDetail ccsToTid(CurCupSuccess ccs) {
+        TrxInfoDetail tid = new TrxInfoDetail();
+        tid.setTranAmt(ccs.getTranAmt().multiply(new BigDecimal(100)).toBigInteger());
+        tid.setCcyCode(ccs.getTranCcyCode());
+        DiscountDetail dd = new DiscountDetail();
+        dd.setDiscountAmt(ccs.getDiscountAmt().multiply(new BigDecimal(100)).toBigInteger());
+        tid.setDiscountDetails(Collections.singletonList(dd));
+        tid.setOriginalAmt(ccs.getOriginalAmt().multiply(new BigDecimal(100)).toBigInteger());
+        tid.setCostAmt(ccs.getCostAmt().multiply(new BigDecimal(100)).toBigInteger());
+        tid.setChannelId(ccs.getChannelId());
+        tid.setMerTraceNo(ccs.getMerTraceNo());
+        tid.setOriginalMerTraceNo(ccs.getOriginalMerTraceNo());
+        tid.setBankLsNo(ccs.getBatchNo());
+        tid.setChannelTraceNo(ccs.getChannelTraceNo());
+        return tid;
     }
 }
