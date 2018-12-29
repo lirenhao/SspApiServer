@@ -119,15 +119,16 @@ public class ApiController {
     public void accountFile(@RequestBody String data, HttpServletResponse response) throws IOException {
         Request<AccountFile> req = dataToReq(data);
         // 为了数据校验能通过
-        req.getTrxInfo().setMerchantId("123456789012345");
-        req.getTrxInfo().setTerminalId("12345678");
+        req.getTrxInfo().setMerchantId("000000000000000");
+        req.getTrxInfo().setTerminalId("00000000");
         Response resp = apiService.accountFile(req);
 
         if ("00".equals(resp.getMsgResponse().getRespCode())) {
             // TODO 生成对账文件
-            response.setHeader("Pragma", "No-cache");
-            response.setHeader("Cache-Control", "no-cache");
-            response.setDateHeader("Expires", 0);
+            response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+            response.setHeader("Content-disposition", "attachment;filename=\"" +
+                    req.getMsgInfo().getOrgId() + req.getTrxInfo().getSettleDate() + ".xls" + "\"");
+
         } else {
             // TODO 数据获取失败如何处理
         }

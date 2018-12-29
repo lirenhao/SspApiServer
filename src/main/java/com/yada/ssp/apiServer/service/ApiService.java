@@ -22,16 +22,18 @@ public class ApiService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final ApiOrgDao apiOrgDao;
-    private final SspService sspService;
-
     @Value("${signature.private-key}")
     private String privateKey;
 
+    private final ApiOrgDao apiOrgDao;
+    private final SspService sspService;
+    private final TermBatchService termBatchService;
+
     @Autowired
-    public ApiService(ApiOrgDao apiOrgDao, SspService sspService) {
+    public ApiService(ApiOrgDao apiOrgDao, SspService sspService, TermBatchService termBatchService) {
         this.apiOrgDao = apiOrgDao;
         this.sspService = sspService;
+        this.termBatchService = termBatchService;
     }
 
     interface Callback<T extends TrxInfo> {
@@ -64,7 +66,7 @@ public class ApiService {
             }
         } else {
             resp.setTrxInfo(req.getTrxInfo());
-            resp.setMsgResponse(new MsgResponse("A0", "Merchant No. Error"));
+            resp.setMsgResponse(new MsgResponse("03", "Invalid merchant"));
             logger.warn("机构商户不匹配[{}]", req.getMsgInfo().toString());
         }
         resp.getMsgInfo().setTimeStamp(DateUtil.getCurDateTime());
@@ -75,9 +77,7 @@ public class ApiService {
     }
 
     public Response<BatchNo> batchNo(@Valid Request<BatchNo> req) {
-        return handle(req, (info, resp) -> {
-            // TODO 与SSP交互
-        });
+        return handle(req, termBatchService::getBatchNo);
     }
 
     public Response<BatchSettle> batchSettle(@Valid Request<BatchSettle> req) {

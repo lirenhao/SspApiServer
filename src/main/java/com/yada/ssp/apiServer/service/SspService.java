@@ -87,7 +87,7 @@ public class SspService {
 
     void query(Query info, Response<Query> resp) {
         Map<String, String> reqMap = new HashMap<>();
-        reqMap.put("931", "05");
+        reqMap.put("931", "02");
         reqMap.put("041", info.getTerminalId());
         reqMap.put("042", info.getMerchantId());
         reqMap.put("068", info.getMerTraceNo());

@@ -3,7 +3,6 @@ package com.yada.ssp.apiServer.net;
 import com.yada.ssp.apiServer.util.TlvPacker;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 public class MockSspClient implements SspClient {
@@ -11,19 +10,33 @@ public class MockSspClient implements SspClient {
     @Override
     public ByteBuffer send(ByteBuffer req) {
         Map<String, String> reqData = TlvPacker.unPacker(new String(req.array()));
-        Map<String, String> respData = new HashMap<>();
-        respData.put("039", "00");
-        respData.put("040", "Approved");
+        String respData = "";
         switch (reqData.get("931")) {
             case "01":
+                respData = qrCode(reqData);
+                break;
+            case "05":
+                respData = refund(reqData);
                 break;
             case "02":
+                respData = query(reqData);
                 break;
             default:
-                respData.put("039", "04");
-                respData.put("040", "Pending");
+
         }
 
-        return ByteBuffer.wrap(TlvPacker.packer(respData).getBytes());
+        return ByteBuffer.wrap(respData.getBytes());
+    }
+
+    private String qrCode(Map<String, String> data) {
+        return "";
+    }
+
+    private String refund(Map<String, String> data) {
+        return "";
+    }
+
+    private String query(Map<String, String> data) {
+        return "";
     }
 }

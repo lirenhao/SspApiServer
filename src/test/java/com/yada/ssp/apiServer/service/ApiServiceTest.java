@@ -28,6 +28,8 @@ public class ApiServiceTest {
     private ApiOrgDao apiOrgDao;
     @MockBean
     private SspService sspService;
+    @MockBean
+    private TermBatchService termBatchService;
     @Autowired
     private ApiService apiService;
 
@@ -64,8 +66,8 @@ public class ApiServiceTest {
         Response<ApiTest> resp = apiService.handle(req, callback);
         Assert.assertEquals(msgInfo, resp.getMsgInfo());
         Assert.assertEquals(trxInfo, resp.getTrxInfo());
-        Assert.assertEquals("A0", resp.getMsgResponse().getRespCode());
-        Assert.assertEquals("Merchant No. Error", resp.getMsgResponse().getRespDesc());
+        Assert.assertEquals("03", resp.getMsgResponse().getRespCode());
+        Assert.assertEquals("Invalid merchant", resp.getMsgResponse().getRespDesc());
         String respSign = resp.getCertificateSignature().getSignature();
         resp.setCertificateSignature(certSign);
         Assert.assertTrue(SignUtil.verify(resp, respSign, publicKey));
