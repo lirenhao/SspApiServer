@@ -6,11 +6,15 @@ import com.yada.ssp.apiServer.model.TermBatchPK;
 import com.yada.ssp.apiServer.view.BatchNo;
 import com.yada.ssp.apiServer.view.MsgResponse;
 import com.yada.ssp.apiServer.view.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BatchService {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final TermBatchDao termBatchDao;
 
@@ -36,6 +40,7 @@ public class BatchService {
         } else {
             resp.setTrxInfo(info);
             resp.setMsgResponse(new MsgResponse("91", "Issuer system error"));
+            logger.warn("没有查询到商户[{}]和终端[{}]的批次号", info.getMerchantId(), info.getTerminalId());
         }
     }
 }
