@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TermBatchService {
+public class BatchService {
 
     private final TermBatchDao termBatchDao;
 
     @Autowired
-    public TermBatchService(TermBatchDao termBatchDao) {
+    public BatchService(TermBatchDao termBatchDao) {
         this.termBatchDao = termBatchDao;
     }
 
@@ -25,7 +25,7 @@ public class TermBatchService {
      * @param info 获取批次信息参数
      * @param resp 返回信息报文
      */
-    public void getBatchNo(BatchNo info, Response<BatchNo> resp) {
+    void getBatchNo(BatchNo info, Response<BatchNo> resp) {
         TermBatch termBatch = termBatchDao
                 .findById(new TermBatchPK(info.getMerchantId(), info.getTerminalId()))
                 .orElse(null);

@@ -29,7 +29,7 @@ public class ApiServiceTest {
     @MockBean
     private SspService sspService;
     @MockBean
-    private TermBatchService termBatchService;
+    private BatchService batchService;
     @Autowired
     private ApiService apiService;
 

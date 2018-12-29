@@ -17,13 +17,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Optional;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = TermBatchService.class)
-public class TermBatchServiceTest {
+@SpringBootTest(classes = BatchService.class)
+public class BatchServiceTest {
 
     @MockBean
     private TermBatchDao termBatchDao;
     @Autowired
-    private TermBatchService termBatchService;
+    private BatchService batchService;
 
     @Test
     public void testGetBatchNoNotNull() {
@@ -34,7 +34,7 @@ public class TermBatchServiceTest {
 
         BatchNo batchNo = new BatchNo();
         Response<BatchNo> resp = new Response<>();
-        termBatchService.getBatchNo(batchNo, resp);
+        batchService.getBatchNo(batchNo, resp);
 
         Assert.assertEquals("00", resp.getMsgResponse().getRespCode());
         Assert.assertEquals("Approved", resp.getMsgResponse().getRespDesc());
@@ -48,7 +48,7 @@ public class TermBatchServiceTest {
 
         BatchNo batchNo = new BatchNo();
         Response<BatchNo> resp = new Response<>();
-        termBatchService.getBatchNo(batchNo, resp);
+        batchService.getBatchNo(batchNo, resp);
 
         Assert.assertEquals("91", resp.getMsgResponse().getRespCode());
         Assert.assertEquals("Issuer system error", resp.getMsgResponse().getRespDesc());

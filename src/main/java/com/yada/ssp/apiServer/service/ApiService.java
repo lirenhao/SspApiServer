@@ -27,13 +27,13 @@ public class ApiService {
 
     private final ApiOrgDao apiOrgDao;
     private final SspService sspService;
-    private final TermBatchService termBatchService;
+    private final BatchService batchService;
 
     @Autowired
-    public ApiService(ApiOrgDao apiOrgDao, SspService sspService, TermBatchService termBatchService) {
+    public ApiService(ApiOrgDao apiOrgDao, SspService sspService, BatchService batchService) {
         this.apiOrgDao = apiOrgDao;
         this.sspService = sspService;
-        this.termBatchService = termBatchService;
+        this.batchService = batchService;
     }
 
     interface Callback<T extends TrxInfo> {
@@ -77,7 +77,7 @@ public class ApiService {
     }
 
     public Response<BatchNo> batchNo(@Valid Request<BatchNo> req) {
-        return handle(req, termBatchService::getBatchNo);
+        return handle(req, batchService::getBatchNo);
     }
 
     public Response<BatchSettle> batchSettle(@Valid Request<BatchSettle> req) {
