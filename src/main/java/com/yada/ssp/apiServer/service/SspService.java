@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +57,41 @@ public class SspService {
         resp.setTrxInfo(info);
     }
 
+    void scanPay(ScanPay info, Response<ScanPay> resp) {
+        // TODO 反扫交易
+        Map<String, String> reqMap = new HashMap<>();
+        reqMap.put("931", "");
+        reqMap.put("004", info.getTranAmt().toString());
+        reqMap.put("018", info.getCcyCode());
+        reqMap.put("041", info.getTerminalId());
+        reqMap.put("042", info.getMerchantId());
+        reqMap.put("068", info.getMerTraceNo());
+        reqMap.put("", info.getPayLoad());
+        String reqStr = TlvPacker.packer(reqMap);
+        try {
+            logger.info("反扫交易的请求报文是[{}]", reqStr);
+            ByteBuffer respBuffer = sspClient.send(ByteBuffer.wrap(reqStr.getBytes()));
+            Map<String, String> respMap = TlvPacker.unPacker(new String(respBuffer.array()));
+            resp.setMsgResponse(new MsgResponse(respMap.get("039"), respMap.get("040")));
+            if ("00".equals(respMap.get("039"))) {
+                info.setDiscountDetails(Collections.emptyList());
+                info.setOriginalAmt(new BigInteger(respMap.get("")));
+                info.setCostAmt(new BigInteger(respMap.get("")));
+                info.setChannelId(respMap.get(""));
+                info.setBankLsNo(respMap.get(""));
+                info.setQrcVoucherNo(respMap.get(""));
+                info.setChannelTraceNo(respMap.get(""));
+            } else {
+                logger.warn("反扫交易失败,返回码是[{}],提示信息是[{}]", respMap.get("039"), respMap.get("040"));
+            }
+        } catch (IOException e) {
+            resp.setMsgResponse(new MsgResponse("91", "Issuer system error"));
+            logger.warn("反扫交易异常,请求报文是[{}],异常信息是[{}]", reqStr, e.getMessage());
+        }
+        info.setPayLoad(null);
+        resp.setTrxInfo(info);
+    }
+
     void refund(Refund info, Response<Refund> resp) {
         Map<String, String> reqMap = new HashMap<>();
         reqMap.put("931", "05");
@@ -86,6 +122,7 @@ public class SspService {
     }
 
     void query(Query info, Response<Query> resp) {
+        // TODO 查询交易
         Map<String, String> reqMap = new HashMap<>();
         reqMap.put("931", "02");
         reqMap.put("041", info.getTerminalId());
@@ -98,9 +135,12 @@ public class SspService {
             Map<String, String> respMap = TlvPacker.unPacker(new String(respBuffer.array()));
             resp.setMsgResponse(new MsgResponse(respMap.get("039"), respMap.get("040")));
             if ("00".equals(respMap.get("039"))) {
-                // TODO 确定查询返回值的key
                 info.setTranAmt(new BigInteger(respMap.get("")));
                 info.setCcyCode(respMap.get(""));
+                info.setDiscountDetails(Collections.emptyList());
+                info.setOriginalAmt(new BigInteger(respMap.get("")));
+                info.setCostAmt(new BigInteger(respMap.get("")));
+                info.setQrcVoucherNo(respMap.get(""));
                 info.setChannelId(respMap.get(""));
                 info.setOriginalMerTraceNo(respMap.get(""));
                 info.setBankLsNo(respMap.get(""));

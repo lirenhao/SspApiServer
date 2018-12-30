@@ -89,9 +89,7 @@ public class ApiService {
     }
 
     public Response<ScanPay> scanPay(@Valid Request<ScanPay> req) {
-        return handle(req, (info, resp) -> {
-            // TODO 与SSP交互
-        });
+        return handle(req, sspService::scanPay);
     }
 
     public Response<Refund> refund(@Valid Request<Refund> req) {
