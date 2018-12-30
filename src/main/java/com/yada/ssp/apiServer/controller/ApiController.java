@@ -4,12 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yada.ssp.apiServer.service.ApiService;
 import com.yada.ssp.apiServer.view.*;
-import org.jxls.common.Context;
-import org.jxls.util.JxlsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
-import java.io.InputStream;
 
 @RestController
 public class ApiController {
@@ -28,12 +24,10 @@ public class ApiController {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     private final ApiService apiService;
-    private final ResourceLoader resourceLoader;
 
     @Autowired
-    public ApiController(ApiService apiService, ResourceLoader resourceLoader) {
+    public ApiController(ApiService apiService) {
         this.apiService = apiService;
-        this.resourceLoader = resourceLoader;
     }
 
     /**
@@ -130,13 +124,12 @@ public class ApiController {
 
         if ("00".equals(resp.getMsgResponse().getRespCode())) {
             // 生成对账文件
-            Context context = new Context();
-            context.putVar("list", resp.getTrxInfo().getAccInfoDetails());
-            InputStream template = resourceLoader.getResource("classpath:template.xls").getInputStream();
-            JxlsHelper.getInstance().processTemplate(template, response.getOutputStream(), context);
-            response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+            response.setContentType("application/octet-stream;charset=UTF-8");
             response.setHeader("Content-disposition", "attachment;filename=\"" +
-                    req.getMsgInfo().getOrgId() + req.getTrxInfo().getSettleDate() + ".xls" + "\"");
+                    req.getMsgInfo().getOrgId() + req.getTrxInfo().getSettleDate() + ".text" + "\"");
+            for (String item : resp.getTrxInfo().getAccInfoDetails()) {
+                response.getOutputStream().write(item.getBytes());
+            }
         } else {
             response.setContentType("application/json; charset=utf-8");
             objectMapper.writeValue(response.getOutputStream(), resp);

@@ -154,6 +154,7 @@ public class AccInfoDetail {
                 merTraceNo + '|' +
                 originalMerTraceNo + '|' +
                 bankLsNo + '|' +
-                batchNo + '|';
+                batchNo + '|' +
+                "\r\n";
     }
 }

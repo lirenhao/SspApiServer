@@ -22,10 +22,11 @@ public class TranService {
 
     void accountFile(AccountFile info, Response<AccountFile> resp) {
         String orgId = resp.getMsgInfo().getOrgId();
+        // TODO 获取商户号
         String settleDate = info.getSettleDate();
         info.setAccInfoDetails(curCupqrcTranDao.
                 findByLocalSettleDateAndMerchantIdIn(settleDate, new String[]{}).stream().
-                map(this::tranToAcc).collect(Collectors.toList()));
+                map(this::tranToAcc).map(AccInfoDetail::toString).collect(Collectors.toList()));
         resp.setTrxInfo(info);
     }
 

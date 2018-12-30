@@ -13,7 +13,7 @@ public class AccountFile extends TrxInfo {
     private String settleDate; // 清算日期YYYYMMDD
 
     @JsonIgnore
-    private List<AccInfoDetail> accInfoDetails;
+    private List<String> accInfoDetails;
 
     public String getSettleDate() {
         return settleDate;
@@ -23,11 +23,11 @@ public class AccountFile extends TrxInfo {
         this.settleDate = settleDate;
     }
 
-    public List<AccInfoDetail> getAccInfoDetails() {
+    public List<String> getAccInfoDetails() {
         return accInfoDetails;
     }
 
-    public void setAccInfoDetails(List<AccInfoDetail> accInfoDetails) {
+    public void setAccInfoDetails(List<String> accInfoDetails) {
         this.accInfoDetails = accInfoDetails;
     }
 }
