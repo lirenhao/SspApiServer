@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class BatchService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -62,6 +61,7 @@ public class BatchService {
      * @param info 批次结算参数
      * @param resp 返回信息报文
      */
+    @Transactional
     void batchSettle(BatchSettle info, Response<BatchSettle> resp) {
         TermBatch termBatch = termBatchDao
                 .findById(new TermBatchPK(info.getMerchantId(), info.getTerminalId())).orElse(null);

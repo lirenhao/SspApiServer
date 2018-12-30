@@ -1,7 +1,6 @@
 package com.yada.ssp.apiServer.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -9,15 +8,12 @@ import javax.validation.constraints.NotEmpty;
 public class MsgInfo {
 
     @NotEmpty
-    @JsonProperty("versionNo")
     private String versionNo; // 版本号
 
     @NotEmpty
-    @JsonProperty("timeStamp")
     private String timeStamp; // 时间戳
 
     @NotEmpty
-    @JsonProperty("orgId")
     private String orgId; // 机构ID
 
     public String getVersionNo() {

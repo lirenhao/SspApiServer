@@ -30,6 +30,8 @@ public class ApiServiceTest {
     private SspService sspService;
     @MockBean
     private BatchService batchService;
+    @MockBean
+    private TranService tranService;
     @Autowired
     private ApiService apiService;
 

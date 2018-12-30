@@ -4,9 +4,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yada.ssp.apiServer.service.ApiService;
 import com.yada.ssp.apiServer.view.*;
+import org.jxls.common.Context;
+import org.jxls.util.JxlsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
+import java.io.InputStream;
 
 @RestController
 public class ApiController {
@@ -24,10 +28,12 @@ public class ApiController {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     private final ApiService apiService;
+    private final ResourceLoader resourceLoader;
 
     @Autowired
-    public ApiController(ApiService apiService) {
+    public ApiController(ApiService apiService, ResourceLoader resourceLoader) {
         this.apiService = apiService;
+        this.resourceLoader = resourceLoader;
     }
 
     /**
@@ -97,6 +103,8 @@ public class ApiController {
         return apiService.query(dataToReq(data));
     }
 
+    // TODO 交易通知
+
     /**
      * 批次交易查询
      *
@@ -118,19 +126,20 @@ public class ApiController {
     @PostMapping("/accountFile")
     public void accountFile(@RequestBody String data, HttpServletResponse response) throws IOException {
         Request<AccountFile> req = dataToReq(data);
-        // 为了数据校验能通过
-        req.getTrxInfo().setMerchantId("000000000000000");
-        req.getTrxInfo().setTerminalId("00000000");
-        Response resp = apiService.accountFile(req);
+        Response<AccountFile> resp = apiService.accountFile(req, req.getMsgInfo());
 
         if ("00".equals(resp.getMsgResponse().getRespCode())) {
-            // TODO 生成对账文件
+            // 生成对账文件
+            Context context = new Context();
+            context.putVar("list", resp.getTrxInfo().getAccInfoDetails());
+            InputStream template = resourceLoader.getResource("classpath:template.xls").getInputStream();
+            JxlsHelper.getInstance().processTemplate(template, response.getOutputStream(), context);
             response.setContentType("application/vnd.ms-excel;charset=UTF-8");
             response.setHeader("Content-disposition", "attachment;filename=\"" +
                     req.getMsgInfo().getOrgId() + req.getTrxInfo().getSettleDate() + ".xls" + "\"");
-
         } else {
-            // TODO 数据获取失败如何处理
+            response.setContentType("application/json; charset=utf-8");
+            objectMapper.writeValue(response.getOutputStream(), resp);
         }
     }
 

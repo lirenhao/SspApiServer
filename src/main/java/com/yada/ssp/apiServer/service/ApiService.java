@@ -28,12 +28,14 @@ public class ApiService {
     private final ApiOrgDao apiOrgDao;
     private final SspService sspService;
     private final BatchService batchService;
+    private final TranService tranService;
 
     @Autowired
-    public ApiService(ApiOrgDao apiOrgDao, SspService sspService, BatchService batchService) {
+    public ApiService(ApiOrgDao apiOrgDao, SspService sspService, BatchService batchService, TranService tranService) {
         this.apiOrgDao = apiOrgDao;
         this.sspService = sspService;
         this.batchService = batchService;
+        this.tranService = tranService;
     }
 
     interface Callback<T extends TrxInfo> {
@@ -104,9 +106,14 @@ public class ApiService {
         return handle(req, batchService::batchTranQuery);
     }
 
-    public Response<AccountFile> accountFile(@Valid Request<AccountFile> req) {
-        return handle(req, (info, resp) -> {
-            // TODO 获取对账数据
-        });
+    /**
+     * 对账文件下载不验证商户号、终端号
+     *
+     * @param req     请求参数
+     * @param msgInfo 基本信息
+     * @return 对账文件数据
+     */
+    public Response<AccountFile> accountFile(Request<AccountFile> req, @Valid MsgInfo msgInfo) {
+        return handle(req, tranService::accountFile);
     }
 }
