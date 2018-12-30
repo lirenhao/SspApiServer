@@ -11,7 +11,7 @@ public class Query extends TrxInfo {
 
     private BigInteger tranAmt; // 交易金额 单位:分
 
-    private int ccyCode; // 交易币种
+    private String ccyCode; // 交易币种
 
     private String channelId; // 交易渠道
 
@@ -37,11 +37,11 @@ public class Query extends TrxInfo {
         this.tranAmt = tranAmt;
     }
 
-    public int getCcyCode() {
+    public String getCcyCode() {
         return ccyCode;
     }
 
-    public void setCcyCode(int ccyCode) {
+    public void setCcyCode(String ccyCode) {
         this.ccyCode = ccyCode;
     }
 

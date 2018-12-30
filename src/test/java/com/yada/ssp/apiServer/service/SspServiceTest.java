@@ -34,7 +34,7 @@ public class SspServiceTest {
 
         QrCode info = new QrCode();
         info.setTranAmt(BigInteger.valueOf(100));
-        info.setCcyCode(702);
+        info.setCcyCode("702");
         Response<QrCode> resp = new Response<>();
         sspService.qrCode(info, resp);
 
@@ -50,7 +50,7 @@ public class SspServiceTest {
 
         QrCode info = new QrCode();
         info.setTranAmt(BigInteger.valueOf(100));
-        info.setCcyCode(702);
+        info.setCcyCode("702");
         Response<QrCode> resp = new Response<>();
         sspService.qrCode(info, resp);
 
@@ -66,7 +66,7 @@ public class SspServiceTest {
 
         QrCode info = new QrCode();
         info.setTranAmt(BigInteger.valueOf(100));
-        info.setCcyCode(702);
+        info.setCcyCode("702");
         Response<QrCode> resp = new Response<>();
         sspService.qrCode(info, resp);
 
@@ -85,7 +85,7 @@ public class SspServiceTest {
 
         Refund info = new Refund();
         info.setTranAmt(BigInteger.valueOf(100));
-        info.setCcyCode(702);
+        info.setCcyCode("702");
         Response<Refund> resp = new Response<>();
         sspService.refund(info, resp);
 
@@ -101,7 +101,7 @@ public class SspServiceTest {
 
         Refund info = new Refund();
         info.setTranAmt(BigInteger.valueOf(100));
-        info.setCcyCode(702);
+        info.setCcyCode("702");
         Response<Refund> resp = new Response<>();
         sspService.refund(info, resp);
 
@@ -112,6 +112,7 @@ public class SspServiceTest {
 
     @Test
     public void testRefundSspSuccess() {
+        // TODO 测试SSP返回成功
     }
 
     @Test
@@ -121,7 +122,7 @@ public class SspServiceTest {
 
         Query info = new Query();
         info.setTranAmt(BigInteger.valueOf(100));
-        info.setCcyCode(702);
+        info.setCcyCode("702");
         Response<Query> resp = new Response<>();
         sspService.query(info, resp);
 
@@ -137,7 +138,7 @@ public class SspServiceTest {
 
         Query info = new Query();
         info.setTranAmt(BigInteger.valueOf(100));
-        info.setCcyCode(702);
+        info.setCcyCode("702");
         Response<Query> resp = new Response<>();
         sspService.query(info, resp);
 
@@ -148,5 +149,6 @@ public class SspServiceTest {
 
     @Test
     public void testQuerySspSuccess() {
+        // TODO 测试SSP返回成功
     }
 }

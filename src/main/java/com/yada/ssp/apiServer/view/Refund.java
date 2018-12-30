@@ -12,9 +12,9 @@ public class Refund extends TrxInfo {
     @Digits(integer = 12, fraction = 0)
     private BigInteger tranAmt; // 交易金额 单位:分
 
-    @NotNull
-    @Digits(integer = 3, fraction = 0)
-    private int ccyCode; // 交易币种
+    @NotEmpty
+    @Size(min = 3, max = 3)
+    private String ccyCode; // 交易币种
 
     private String channelId; // 交易渠道
 
@@ -38,11 +38,11 @@ public class Refund extends TrxInfo {
         this.tranAmt = tranAmt;
     }
 
-    public int getCcyCode() {
+    public String getCcyCode() {
         return ccyCode;
     }
 
-    public void setCcyCode(int ccyCode) {
+    public void setCcyCode(String ccyCode) {
         this.ccyCode = ccyCode;
     }
 

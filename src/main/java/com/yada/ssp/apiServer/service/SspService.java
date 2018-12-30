@@ -30,7 +30,7 @@ public class SspService {
         Map<String, String> reqMap = new HashMap<>();
         reqMap.put("931", "01");
         reqMap.put("004", info.getTranAmt().toString());
-        reqMap.put("018", info.getCcyCode() + "");
+        reqMap.put("018", info.getCcyCode());
         reqMap.put("041", info.getTerminalId());
         reqMap.put("042", info.getMerchantId());
         reqMap.put("068", info.getMerTraceNo());
@@ -60,7 +60,7 @@ public class SspService {
         Map<String, String> reqMap = new HashMap<>();
         reqMap.put("931", "05");
         reqMap.put("004", info.getTranAmt().toString());
-        reqMap.put("018", info.getCcyCode() + "");
+        reqMap.put("018", info.getCcyCode());
         reqMap.put("041", info.getTerminalId());
         reqMap.put("042", info.getMerchantId());
         reqMap.put("068", info.getMerTraceNo());
@@ -100,7 +100,7 @@ public class SspService {
             if ("00".equals(respMap.get("039"))) {
                 // TODO 确定查询返回值的key
                 info.setTranAmt(new BigInteger(respMap.get("")));
-                info.setCcyCode(Integer.parseInt(respMap.get("")));
+                info.setCcyCode(respMap.get(""));
                 info.setChannelId(respMap.get(""));
                 info.setOriginalMerTraceNo(respMap.get(""));
                 info.setBankLsNo(respMap.get(""));
