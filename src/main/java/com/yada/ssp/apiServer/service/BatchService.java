@@ -67,12 +67,12 @@ public class BatchService {
                 .findById(new TermBatchPK(info.getMerchantId(), info.getTerminalId())).orElse(null);
         if (termBatch != null) {
             // 查询批次号是否是当前批次号
-            if (info.getBatchNo().compareTo(termBatch.getBatchNo()) == 0) { // 当前的批次
+            if (Integer.parseInt(info.getBatchNo()) == Integer.parseInt(termBatch.getBatchNo())) { // 当前的批次
                 // 更新清算日期,更新批次号
                 updateBatchSettle(DateUtil.getCurDate(), termBatch);
                 queryBatchSettle(info);
                 resp.setMsgResponse(new MsgResponse("00", "Approved"));
-            } else if (info.getBatchNo().compareTo(termBatch.getBatchNo()) < 0) { // 以前的批次
+            } else if (Integer.parseInt(info.getBatchNo()) < Integer.parseInt(termBatch.getBatchNo())) { // 以前的批次
                 queryBatchSettle(info);
                 resp.setMsgResponse(new MsgResponse("00", "Approved"));
             } else { // 未来的批次
@@ -96,9 +96,13 @@ public class BatchService {
     void updateBatchSettle(String settleDate, TermBatch termBatch) {
         curCupqrcTranDao.updateSettleDate(settleDate, termBatch.getMerchantId(),
                 termBatch.getTerminalId(), termBatch.getBatchNo());
-        // TODO 如何更新批次号
-        termBatchDao.updateBatchNo(termBatch.getBatchNo() + 1,
+        termBatchDao.updateBatchNo(getNextBatchNo(termBatch.getBatchNo()),
                 termBatch.getMerchantId(), termBatch.getTerminalId());
+    }
+
+    private String getNextBatchNo(String curBatchNo) {
+        int batchNo = Integer.parseInt(curBatchNo);
+        return String.format("%06d", batchNo == 999999 ? 1 : batchNo + 1);
     }
 
     /**
@@ -145,7 +149,7 @@ public class BatchService {
                 .findById(new TermBatchPK(info.getMerchantId(), info.getTerminalId())).orElse(null);
         if (termBatch != null) {
             if (null != info.getBatchNo() && !"".equals(info.getBatchNo())
-                    && termBatch.getBatchNo().compareTo(info.getBatchNo()) < 0) { // 未来的批次
+                    && Integer.parseInt(termBatch.getBatchNo()) < Integer.parseInt(info.getBatchNo())) { // 未来的批次
                 resp.setMsgResponse(new MsgResponse("12", "Invalid transaction"));
                 logger.warn("商户[{}]和终端[{}]的批次号[{}]大于当前批次号[{}]",
                         info.getMerchantId(), info.getTerminalId(), info.getBatchNo(), termBatch.getBatchNo());

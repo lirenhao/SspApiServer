@@ -6,6 +6,7 @@ import com.yada.ssp.apiServer.dao.TermBatchDao;
 import com.yada.ssp.apiServer.model.CurCupSuccess;
 import com.yada.ssp.apiServer.model.TermBatch;
 import com.yada.ssp.apiServer.model.TermBatchPK;
+import com.yada.ssp.apiServer.util.DateUtil;
 import com.yada.ssp.apiServer.view.BatchNo;
 import com.yada.ssp.apiServer.view.BatchQuery;
 import com.yada.ssp.apiServer.view.BatchSettle;
@@ -252,5 +253,27 @@ public class BatchServiceTest {
         batchService.queryBatchTran(bq3, "000004");
         Mockito.verify(curCupSuccessDao, Mockito.times(1))
                 .findByMerchantIdAndTerminalIdAndBatchNo(null, null, "000003");
+    }
+
+    @Test
+    public void testUpdateBatchSettle() {
+        String settleDate = DateUtil.getCurDate();
+        TermBatch termBatch = new TermBatch();
+        termBatch.setMerchantId("MerchantId");
+        termBatch.setTerminalId("TerminalId");
+
+        termBatch.setBatchNo("000001");
+        batchService.updateBatchSettle(settleDate, termBatch);
+        Mockito.verify(curCupqrcTranDao, Mockito.times(1))
+                .updateSettleDate(settleDate, termBatch.getMerchantId(), termBatch.getTerminalId(), termBatch.getBatchNo());
+        Mockito.verify(termBatchDao, Mockito.times(1))
+                .updateBatchNo("000002", termBatch.getMerchantId(), termBatch.getTerminalId());
+
+        termBatch.setBatchNo("999999");
+        batchService.updateBatchSettle(settleDate, termBatch);
+        Mockito.verify(curCupqrcTranDao, Mockito.times(1))
+                .updateSettleDate(settleDate, termBatch.getMerchantId(), termBatch.getTerminalId(), termBatch.getBatchNo());
+        Mockito.verify(termBatchDao, Mockito.times(1))
+                .updateBatchNo("000001", termBatch.getMerchantId(), termBatch.getTerminalId());
     }
 }

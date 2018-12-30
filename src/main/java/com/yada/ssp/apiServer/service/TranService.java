@@ -26,15 +26,15 @@ public class TranService {
         String settleDate = info.getSettleDate();
         info.setAccInfoDetails(curCupqrcTranDao.
                 findByLocalSettleDateAndMerchantIdIn(settleDate, new String[]{}).stream().
-                map(this::tranToAcc).map(AccInfoDetail::toString).collect(Collectors.toList()));
+                map(this::tranToAcc).collect(Collectors.toList()));
         resp.setTrxInfo(info);
     }
 
-    private AccInfoDetail tranToAcc(CurCupqrcTran tran) {
+    private String tranToAcc(CurCupqrcTran tran) {
         AccInfoDetail aid = new AccInfoDetail();
         aid.setMerchantId(tran.getMerchantId());
         aid.setTerminalId(tran.getTerminalId());
         aid.setBatchNo(tran.getBatchNo());
-        return aid;
+        return aid.toString();
     }
 }
