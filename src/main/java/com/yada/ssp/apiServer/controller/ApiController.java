@@ -1,6 +1,6 @@
 package com.yada.ssp.apiServer.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yada.ssp.apiServer.service.ApiService;
 import com.yada.ssp.apiServer.view.*;
@@ -38,7 +38,7 @@ public class ApiController {
      */
     @PostMapping("/batchNo")
     public Response<BatchNo> batchNo(@RequestBody String data) throws IOException {
-        return apiService.batchNo(dataToReq(data));
+        return apiService.batchNo(dataToReq(BatchNo.class, data));
     }
 
     /**
@@ -49,7 +49,7 @@ public class ApiController {
      */
     @PostMapping("/batchSettle")
     public Response<BatchSettle> batchSettle(@RequestBody String data) throws IOException {
-        return apiService.batchSettle(dataToReq(data));
+        return apiService.batchSettle(dataToReq(BatchSettle.class, data));
     }
 
     /**
@@ -60,7 +60,7 @@ public class ApiController {
      */
     @PostMapping("/qrCode")
     public Response<QrCode> qrCode(@RequestBody String data) throws IOException {
-        return apiService.qrCode(dataToReq(data));
+        return apiService.qrCode(dataToReq(QrCode.class, data));
     }
 
 
@@ -72,7 +72,7 @@ public class ApiController {
      */
     @PostMapping("/scanPay")
     public Response<ScanPay> scanPay(@RequestBody String data) throws IOException {
-        return apiService.scanPay(dataToReq(data));
+        return apiService.scanPay(dataToReq(ScanPay.class, data));
     }
 
     /**
@@ -83,7 +83,7 @@ public class ApiController {
      */
     @PostMapping("/refund")
     public Response<Refund> refund(@RequestBody String data) throws IOException {
-        return apiService.refund(dataToReq(data));
+        return apiService.refund(dataToReq(Refund.class, data));
     }
 
     /**
@@ -94,7 +94,7 @@ public class ApiController {
      */
     @PostMapping("/query")
     public Response<Query> query(@RequestBody String data) throws IOException {
-        return apiService.query(dataToReq(data));
+        return apiService.query(dataToReq(Query.class, data));
     }
 
     // TODO 交易通知
@@ -107,7 +107,7 @@ public class ApiController {
      */
     @PostMapping("/batchQuery")
     public Response<BatchQuery> batchQuery(@RequestBody String data) throws IOException {
-        return apiService.batchQuery(dataToReq(data));
+        return apiService.batchQuery(dataToReq(BatchQuery.class, data));
     }
 
     /**
@@ -119,7 +119,7 @@ public class ApiController {
      */
     @PostMapping("/accountFile")
     public void accountFile(@RequestBody String data, HttpServletResponse response) throws IOException {
-        Request<AccountFile> req = dataToReq(data);
+        Request<AccountFile> req = dataToReq(AccountFile.class, data);
         Response<AccountFile> resp = apiService.accountFile(req, req.getMsgInfo());
 
         if ("00".equals(resp.getMsgResponse().getRespCode())) {
@@ -136,6 +136,15 @@ public class ApiController {
         }
     }
 
+    private <T extends TrxInfo> Request<T> dataToReq(Class clazz, String data) throws IOException {
+        logger.info("商户的请求报文[{}]", data);
+        JavaType dataType = objectMapper.getTypeFactory()
+                .constructParametricType(Request.class, clazz);
+        Request<T> req = objectMapper.readValue(data, dataType);
+        req.setData(data);
+        return req;
+    }
+
     @ExceptionHandler(value = {ConstraintViolationException.class})
     public ResponseEntity validException(ConstraintViolationException e) {
         logger.warn("接口参数错误,错误信息[{}]", e.getMessage());
@@ -146,13 +155,5 @@ public class ApiController {
     public ResponseEntity toJsonException(IOException e) {
         logger.warn("参数格式错误,错误信息[{}]", e.getMessage());
         return ResponseEntity.badRequest().body("参数必须是JSON格式");
-    }
-
-    private <T extends Request> T dataToReq(String data) throws IOException {
-        logger.info("商户的请求报文[{}]", data);
-        T req = objectMapper.readValue(data, new TypeReference<T>() {
-        });
-        req.setData(data);
-        return req;
     }
 }
