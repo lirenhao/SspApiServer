@@ -12,7 +12,7 @@ public class SspClientProperties {
     private int lenSize;
     private String ver;
     private int timeOut;
-    private boolean isMock = false;
+    private boolean mock = false;
 
     public String getHostName() {
         return hostName;
@@ -55,10 +55,10 @@ public class SspClientProperties {
     }
 
     public boolean isMock() {
-        return isMock;
+        return mock;
     }
 
     public void setMock(boolean mock) {
-        isMock = mock;
+        this.mock = mock;
     }
 }
