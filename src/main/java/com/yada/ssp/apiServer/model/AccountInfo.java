@@ -1,22 +1,75 @@
-package com.yada.ssp.apiServer.view;
+package com.yada.ssp.apiServer.model;
 
-public class AccInfoDetail {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "V_ORG_MER_ACCOUNTFILE")
+public class AccountInfo {
+
+    @Id
+    @Column
+    private String lsId;
+    @Column
+    private String orgId;
+    @Column
+    private String settleDate;
+    @Column
     private String merchantId;
+    @Column
     private String terminalId;
+    @Column
     private String tranDate;
+    @Column
     private String tranTime;
+    @Column
     private String tranType;
+    @Column
     private String originalAmt;
+    @Column
     private String discountAmt;
+    @Column
     private String costAmt;
+    @Column
     private String tranAmt;
+    @Column
     private String fee;
+    @Column
     private String settleAmt;
+    @Column
     private String merTraceNo;
+    @Column
     private String originalMerTraceNo;
+    @Column
     private String bankLsNo;
+    @Column
     private String batchNo;
+
+    public String getLsId() {
+        return lsId;
+    }
+
+    public void setLsId(String lsId) {
+        this.lsId = lsId;
+    }
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
+    public String getSettleDate() {
+        return settleDate;
+    }
+
+    public void setSettleDate(String settleDate) {
+        this.settleDate = settleDate;
+    }
 
     public String getMerchantId() {
         return merchantId;
