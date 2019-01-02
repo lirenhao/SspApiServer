@@ -3,6 +3,7 @@ package com.yada.ssp.apiServer.service;
 import com.yada.ssp.apiServer.dao.AccountInfoDao;
 import com.yada.ssp.apiServer.model.AccountInfo;
 import com.yada.ssp.apiServer.view.AccountFile;
+import com.yada.ssp.apiServer.view.MsgResponse;
 import com.yada.ssp.apiServer.view.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class TranService {
     }
 
     void accountFile(AccountFile info, Response<AccountFile> resp) {
+        resp.setMsgResponse(new MsgResponse("00", "Approved"));
         String orgId = resp.getMsgInfo().getOrgId();
         String settleDate = info.getSettleDate();
         info.setAccInfoDetails(accountInfoDao.findByOrgIdAndSettleDate(orgId, settleDate)
