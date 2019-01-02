@@ -46,7 +46,7 @@ public class SspService {
             if ("00".equals(respMap.get("039"))) {
                 info.setBankLsNo(respMap.get("065"));
                 info.setPayLoad(respMap.get("066"));
-                info.setTimeout(respMap.get("067"));
+                info.setExpTime(respMap.get("067"));
             } else {
                 logger.warn("获取付款码失败,返回码是[{}],提示信息是[{}]", respMap.get("039"), respMap.get("040"));
             }

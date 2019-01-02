@@ -28,7 +28,7 @@ public class QrCode extends TrxInfo {
 
     private String payLoad; // 二维码,交易成功时返回
 
-    private String timeout; // 二维码过期时间 单位:秒
+    private String expTime; // 二维码过期时间 单位:秒
 
     public BigInteger getTranAmt() {
         return tranAmt;
@@ -78,11 +78,11 @@ public class QrCode extends TrxInfo {
         this.payLoad = payLoad;
     }
 
-    public String getTimeout() {
-        return timeout;
+    public String getExpTime() {
+        return expTime;
     }
 
-    public void setTimeout(String timeout) {
-        this.timeout = timeout;
+    public void setExpTime(String expTime) {
+        this.expTime = expTime;
     }
 }
