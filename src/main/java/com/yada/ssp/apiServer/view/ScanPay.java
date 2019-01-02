@@ -40,8 +40,6 @@ public class ScanPay extends TrxInfo {
 
     private String couponInfo; // 优惠券，暂不使用
 
-    private String qrcVoucherNo; // BCFES填充
-
     private String channelTraceNo; // 二维码渠道对应系统的流水号
 
     public BigInteger getTranAmt() {
@@ -122,14 +120,6 @@ public class ScanPay extends TrxInfo {
 
     public void setCouponInfo(String couponInfo) {
         this.couponInfo = couponInfo;
-    }
-
-    public String getQrcVoucherNo() {
-        return qrcVoucherNo;
-    }
-
-    public void setQrcVoucherNo(String qrcVoucherNo) {
-        this.qrcVoucherNo = qrcVoucherNo;
     }
 
     public String getChannelTraceNo() {

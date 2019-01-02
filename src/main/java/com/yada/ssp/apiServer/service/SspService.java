@@ -74,13 +74,15 @@ public class SspService {
             Map<String, String> respMap = TlvPacker.unPacker(new String(respBuffer.array()));
             resp.setMsgResponse(new MsgResponse(respMap.get("039"), respMap.get("040")));
             if ("00".equals(respMap.get("039"))) {
-                info.setDiscountDetails(Collections.emptyList());
+                DiscountDetail discountDetail = new DiscountDetail();
+                discountDetail.setDiscountAmt(new BigInteger(respMap.get("")));
+                discountDetail.setDiscountNote(respMap.get(""));
+                info.setDiscountDetails(Collections.singletonList(discountDetail));
                 info.setOriginalAmt(new BigInteger(respMap.get("")));
                 info.setCostAmt(new BigInteger(respMap.get("")));
-                info.setChannelId(respMap.get(""));
-                info.setBankLsNo(respMap.get(""));
-                info.setQrcVoucherNo(respMap.get(""));
-                info.setChannelTraceNo(respMap.get(""));
+                info.setChannelId(respMap.get("070"));
+                info.setBankLsNo(respMap.get("065"));
+                info.setChannelTraceNo(respMap.get("069"));
             } else {
                 logger.warn("反扫交易失败,返回码是[{}],提示信息是[{}]", respMap.get("039"), respMap.get("040"));
             }
@@ -133,23 +135,22 @@ public class SspService {
             logger.info("发起查询的请求报文是[{}]", reqStr);
             ByteBuffer respBuffer = sspClient.send(ByteBuffer.wrap(reqStr.getBytes()));
             Map<String, String> respMap = TlvPacker.unPacker(new String(respBuffer.array()));
-            resp.setMsgResponse(new MsgResponse(respMap.get("039"), respMap.get("040")));
-            if ("00".equals(respMap.get("039"))) {
-                info.setTranAmt(new BigInteger(respMap.get("")));
-                info.setCcyCode(respMap.get(""));
-                info.setDiscountDetails(Collections.emptyList());
-                info.setOriginalAmt(new BigInteger(respMap.get("")));
-                info.setCostAmt(new BigInteger(respMap.get("")));
-                info.setQrcVoucherNo(respMap.get(""));
-                info.setChannelId(respMap.get(""));
-                info.setOriginalMerTraceNo(respMap.get(""));
-                info.setBankLsNo(respMap.get(""));
-                info.setChannelTraceNo(respMap.get(""));
-                info.setTrxRespCode(respMap.get(""));
-                info.setTrxRespDesc(respMap.get(""));
-            } else {
-                logger.warn("发起查询失败,返回码是[{}],提示信息是[{}]", respMap.get("039"), respMap.get("040"));
-            }
+            resp.setMsgResponse(new MsgResponse("00", "Approved"));
+
+            info.setTranAmt(new BigInteger(respMap.get("004")));
+            info.setCcyCode(respMap.get("018"));
+            DiscountDetail discountDetail = new DiscountDetail();
+            discountDetail.setDiscountAmt(new BigInteger(respMap.get("")));
+            discountDetail.setDiscountNote(respMap.get(""));
+            info.setDiscountDetails(Collections.singletonList(discountDetail));
+            info.setOriginalAmt(new BigInteger(respMap.get("")));
+            info.setCostAmt(new BigInteger(respMap.get("")));
+            info.setChannelId(respMap.get("070"));
+            info.setOriginalMerTraceNo(respMap.get(""));
+            info.setBankLsNo(respMap.get("065"));
+            info.setChannelTraceNo(respMap.get("069"));
+            info.setTrxRespCode(respMap.get("039"));
+            info.setTrxRespDesc(respMap.get("040"));
         } catch (IOException e) {
             resp.setMsgResponse(new MsgResponse("91", "Issuer system error"));
             logger.warn("发起查询异常,请求报文是[{}],异常信息是[{}]", reqStr, e.getMessage());

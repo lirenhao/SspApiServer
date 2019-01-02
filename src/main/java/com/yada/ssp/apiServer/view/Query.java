@@ -20,8 +20,6 @@ public class Query extends TrxInfo {
 
     private BigInteger costAmt; // 成本金额
 
-    private String qrcVoucherNo; // BCFES填充
-
     private String channelId; // 交易渠道
 
     @NotEmpty
@@ -76,14 +74,6 @@ public class Query extends TrxInfo {
 
     public void setCostAmt(BigInteger costAmt) {
         this.costAmt = costAmt;
-    }
-
-    public String getQrcVoucherNo() {
-        return qrcVoucherNo;
-    }
-
-    public void setQrcVoucherNo(String qrcVoucherNo) {
-        this.qrcVoucherNo = qrcVoucherNo;
     }
 
     public String getChannelId() {
