@@ -36,7 +36,7 @@ public class ApiController {
      * @param data 数据
      * @return 响应参数
      */
-    @PostMapping("/batchNo")
+    @PostMapping("/getCurrentBatchNo")
     public Response<BatchNo> batchNo(@RequestBody String data) throws IOException {
         return apiService.batchNo(dataToReq(BatchNo.class, data));
     }
@@ -47,7 +47,7 @@ public class ApiController {
      * @param data 请求参数
      * @return 响应参数
      */
-    @PostMapping("/batchSettle")
+    @PostMapping("/batchSettlement")
     public Response<BatchSettle> batchSettle(@RequestBody String data) throws IOException {
         return apiService.batchSettle(dataToReq(BatchSettle.class, data));
     }
@@ -58,7 +58,7 @@ public class ApiController {
      * @param data 请求参数
      * @return 响应参数
      */
-    @PostMapping("/qrCode")
+    @PostMapping("/getDynamicQRCode")
     public Response<QrCode> qrCode(@RequestBody String data) throws IOException {
         return apiService.qrCode(dataToReq(QrCode.class, data));
     }
@@ -70,7 +70,7 @@ public class ApiController {
      * @param data 请求参数
      * @return 响应参数
      */
-    @PostMapping("/scanPay")
+    @PostMapping("/purchase")
     public Response<ScanPay> scanPay(@RequestBody String data) throws IOException {
         return apiService.scanPay(dataToReq(ScanPay.class, data));
     }
@@ -92,7 +92,7 @@ public class ApiController {
      * @param data 请求参数
      * @return 响应参数
      */
-    @PostMapping("/query")
+    @PostMapping("/trxInquiry")
     public Response<Query> query(@RequestBody String data) throws IOException {
         return apiService.query(dataToReq(Query.class, data));
     }
@@ -105,7 +105,7 @@ public class ApiController {
      * @param data 请求参数
      * @return 响应参数
      */
-    @PostMapping("/batchQuery")
+    @PostMapping("/batchTrxInquiry")
     public Response<BatchQuery> batchQuery(@RequestBody String data) throws IOException {
         return apiService.batchQuery(dataToReq(BatchQuery.class, data));
     }
@@ -117,7 +117,7 @@ public class ApiController {
      * @param response HttpServletResponse
      * @throws IOException I/O异常
      */
-    @PostMapping("/accountFile")
+    @PostMapping("/getSettledReconFile")
     public void accountFile(@RequestBody String data, HttpServletResponse response) throws IOException {
         Request<AccountFile> req = dataToReq(AccountFile.class, data);
         Response<AccountFile> resp = apiService.accountFile(req, req.getMsgInfo());

@@ -50,11 +50,11 @@
 
 - 路径  
   
-    > batchNo
+    > getCurrentBatchNo
 
 - 请求  
     ```
-    curl -X POST http://localhost:9999/batchNo \
+    curl -X POST http://localhost:9999/getCurrentBatchNo \
     -H "Content-Type: application/json" \
     -d "{\"msgInfo\":{\"versionNo\":\"1.0.0\",\"timeStamp\":\"20190102104538\",\"orgId\":\"0001\"},\"trxInfo\":{\"merchantId\":\"123456789012345\",\"terminalId\":\"12345678\"},\"certificateSignature\":{\"signature\":\"j/hNJ4NfQa4W0B0Im5B7ojirRdHxvB5cA4c9u4fwAPjNdEP1ocX/kGxA1TDjfnXxx3necEnpXVvr8QbfRorob++BVK+CExFDsIfG008b//zvBiHsMUzsD3a85wn+GFKnp8PqCWb6kh97BjUwupRWlWbCYSmEuiF4k13JK/IqzFE=\"}}"
     ```
@@ -67,11 +67,11 @@
 
 - 路径  
   
-    > batchSettle
+    > batchSettlement
 
 - 请求  
     ```
-    curl -X POST http://localhost:9999/batchSettle \
+    curl -X POST http://localhost:9999/batchSettlement \
     -H "Content-Type: application/json" \
     -d "{\"msgInfo\":{\"versionNo\":\"1.0.0\",\"timeStamp\":\"20190102104538\",\"orgId\":\"0001\"},\"trxInfo\":{\"merchantId\":\"123456789012345\",\"terminalId\":\"12345678\",\"batchNo\":\"000001\"},\"certificateSignature\":{\"signature\":\"hFQTQwu7JhJiihFF9fzsXqV5P57BEtUl8tkXEM67M+Uv0Z5O8jZOG0LjoSnnwWcNkmu5H8gD5Fetai4GeqvCrsN3KaNWQlDOU6dOPFDVBt1X7ZKyBQTOxZfDMmTqoPPUarW4EMK46wrOyO5QGnyKQgBhd2bdY8muh0EeRGQzNi8=\"}}"
     ```
@@ -84,11 +84,11 @@
 
 - 路径  
   
-    > qrCode
+    > getDynamicQRCode
 
 - 请求  
     ```
-    curl -X POST http://localhost:9999/qrCode \
+    curl -X POST http://localhost:9999/getDynamicQRCode \
     -H "Content-Type: application/json" \
     -d "{\"msgInfo\":{\"versionNo\":\"1.0.0\",\"timeStamp\":\"20190102113539\",\"orgId\":\"0001\"},\"trxInfo\":{\"merchantId\":\"123456789012345\",\"terminalId\":\"12345678\",\"tranAmt\":1000,\"ccyCode\":\"702\",\"channelId\":\"01\",\"merTraceNo\":\"201901021135390001000001\"},\"certificateSignature\":{\"signature\":\"JX1wXSBFjKsLAHYLpyNS/CxdxvW4o37XWTG+ZcMSYy45G36H+NEe2vE2qddapPdpVZ0K8LktryJi6ZKKkUlm7dMpmnqx54ECBtxzbVJ1dHzRqFmphi1yKAtk9URjSihNehIcnsFG6pUHV9vS1JTqFUZfzjKhZIdd2QXAplGh0jg=\"}}"
     ```
@@ -101,11 +101,11 @@
 
 - 路径  
   
-    > scanPay
+    > purchase
 
 - 请求  
     ```
-    curl -X POST http://localhost:9999/scanPay \
+    curl -X POST http://localhost:9999/purchase \
     -H "Content-Type: application/json" \
     -d "{\"msgInfo\":{\"versionNo\":\"1.0.0\",\"timeStamp\":\"20190102113539\",\"orgId\":\"0001\"},\"trxInfo\":{\"merchantId\":\"123456789012345\",\"terminalId\":\"12345678\",\"tranAmt\":1000,\"ccyCode\":\"702\",\"merTraceNo\":\"201901021135390001000001\",\"payLoad\":\"payLoad\"},\"certificateSignature\":{\"signature\":\"R6wx4Ln5YjbHwNSjKozKzVITqX9C4w312qFffmvNlWHybqlbZRLooQctG5nI4HKEYFDBGQN2pqQr7WnH2X+XeD67wsyoYPaJhbMTS6Tg6r3FNX1j+IZ70lVsWx2QelznEwXzxCjAJnGqVj6K6xKWtbvWvUnG1jY8q+Dx0Q3pq6c=\"}}"
     ```
@@ -135,11 +135,11 @@
 
 - 路径  
   
-    > query
+    > trxInquiry
 
 - 请求  
     ```
-    curl -X POST http://localhost:9999/query \
+    curl -X POST http://localhost:9999/trxInquiry \
     -H "Content-Type: application/json" \
     -d "{\"msgInfo\":{\"versionNo\":\"1.0.0\",\"timeStamp\":\"20190102113539\",\"orgId\":\"0001\"},\"trxInfo\":{\"merchantId\":\"123456789012345\",\"terminalId\":\"12345678\",\"merTraceNo\":\"201901021135390001000001\"},\"certificateSignature\":{\"signature\":\"HefRBPn/x42JQl2ylebej9/qp2KXE5wL8VI5+L0ffHrU3SRsx9mfjrO0HyYIx026dqdBZpgoPFLgEVg+NiM6OLmxqRlu4dlS8foaND0ARkDmNmWty1dnbQDDmSTZ+Q3P+FORbTZh+voDFlJidbFX/nA7lG4YEiNzt8rDJ5lQAuM=\"}}"
     ```
@@ -167,11 +167,11 @@
 
 - 路径  
   
-    > batchQuery
+    > batchTrxInquiry
 
 - 请求  
     ```
-    curl -X POST http://localhost:9999/batchQuery \
+    curl -X POST http://localhost:9999/batchTrxInquiry \
     -H "Content-Type: application/json" \
     -d "{\"msgInfo\":{\"versionNo\":\"1.0.0\",\"timeStamp\":\"20190102113539\",\"orgId\":\"0001\"},\"trxInfo\":{\"merchantId\":\"123456789012345\",\"terminalId\":\"12345678\",\"batchNo\":\"000001\"},\"certificateSignature\":{\"signature\":\"Zjoe7t4wk/oPokO8iD8Kk5VwgaEMbJZJJ78VMXiXH5kB3ZfLsG7W8CYUlQcp+B4yiXVzAIFM73HWxKp47ExTwua/Tyu7lrPMzBvRuP+mjzry5byIxgzkEhM+fqsKRvwMQO3FbHePjMqIu1lMcRYLRNnGh9AYAoyWLBFQtTCIt4k=\"}}"
     ```
@@ -184,7 +184,7 @@
 
 - 路径  
   
-    > accountFile
+    > getSettledReconFile
 
 - 请求  
     ```
