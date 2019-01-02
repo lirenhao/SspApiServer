@@ -39,4 +39,12 @@ public class MsgInfo {
     public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
+
+    @Override
+    public String toString() {
+        return "MsgInfo{" + "versionNo='" + versionNo + '\'' +
+                ", timeStamp='" + timeStamp + '\'' +
+                ", orgId='" + orgId + '\'' +
+                '}';
+    }
 }
