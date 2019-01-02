@@ -35,7 +35,6 @@ public class SspServiceTest {
 
         QrCode info = new QrCode();
         info.setTranAmt(BigInteger.valueOf(100));
-        info.setCcyCode("702");
         Response<QrCode> resp = new Response<>();
         sspService.qrCode(info, resp);
 
@@ -51,7 +50,6 @@ public class SspServiceTest {
 
         QrCode info = new QrCode();
         info.setTranAmt(BigInteger.valueOf(100));
-        info.setCcyCode("702");
         Response<QrCode> resp = new Response<>();
         sspService.qrCode(info, resp);
 
@@ -62,21 +60,99 @@ public class SspServiceTest {
 
     @Test
     public void testQrCodeSspSuccess() throws IOException {
+        MockSspClient mockSsp = new MockSspClient();
+        Map<String, String> reqMap = new HashMap<>();
+        reqMap.put("931", "01");
+        reqMap.put("004", "1000");
+        reqMap.put("018", "702");
+        reqMap.put("041", "12345678");
+        reqMap.put("042", "123456789012345");
+        reqMap.put("068", "201901021408230001");
+        reqMap.put("070", "01");
         Mockito.when(sspClient.send(Mockito.any(ByteBuffer.class)))
-                .thenReturn(ByteBuffer.wrap("9310002010040003101011000615390801200142018100918204301800031560390002000400008Approved041000878945612042001510000000000066606500262018100918204300000000702306601620002010102121531104000441234567810000000000066652045411530315654041.015802CN5925Test Merchant 123456789016003BBM6106111   62280512000000007023070878945612630410060670003180".getBytes()));
+                .thenReturn(mockSsp.send(ByteBuffer.wrap(TlvPacker.packer(reqMap).getBytes())));
 
         QrCode info = new QrCode();
-        info.setTranAmt(BigInteger.valueOf(100));
+        info.setTranAmt(BigInteger.valueOf(1000));
         info.setCcyCode("702");
+        info.setMerchantId("123456789012345");
+        info.setTerminalId("12345678");
+        info.setChannelId("01");
+        info.setMerTraceNo("201901021408230001");
         Response<QrCode> resp = new Response<>();
         sspService.qrCode(info, resp);
 
         Assert.assertEquals(info, resp.getTrxInfo());
         Assert.assertEquals("00", resp.getMsgResponse().getRespCode());
         Assert.assertEquals("Approved", resp.getMsgResponse().getRespDesc());
-        Assert.assertEquals("20181009182043000000007023", resp.getTrxInfo().getBankLsNo());
+        Assert.assertEquals("bankLsNo", resp.getTrxInfo().getBankLsNo());
         Assert.assertEquals("0002010102121531104000441234567810000000000066652045411530315654041.015802CN5925Test Merchant 123456789016003BBM6106111   6228051200000000702307087894561263041006", resp.getTrxInfo().getPayLoad());
-        Assert.assertEquals("180", resp.getTrxInfo().getExpTime());
+        Assert.assertEquals(180, resp.getTrxInfo().getExpTime());
+    }
+
+    @Test
+    public void testScanPayException() throws IOException {
+        Mockito.when(sspClient.send(Mockito.any(ByteBuffer.class)))
+                .thenThrow(new IOException("i/o error"));
+
+        ScanPay info = new ScanPay();
+        info.setTranAmt(BigInteger.valueOf(100));
+        Response<ScanPay> resp = new Response<>();
+        sspService.scanPay(info, resp);
+
+        Assert.assertEquals(info, resp.getTrxInfo());
+        Assert.assertEquals("91", resp.getMsgResponse().getRespCode());
+        Assert.assertEquals("Issuer system error", resp.getMsgResponse().getRespDesc());
+    }
+
+    @Test
+    public void testScanPayFailed() throws IOException {
+        Mockito.when(sspClient.send(Mockito.any(ByteBuffer.class)))
+                .thenReturn(ByteBuffer.wrap("0390002300400013MessageFormat".getBytes()));
+
+        ScanPay info = new ScanPay();
+        info.setTranAmt(BigInteger.valueOf(100));
+        Response<ScanPay> resp = new Response<>();
+        sspService.scanPay(info, resp);
+
+        Assert.assertEquals(info, resp.getTrxInfo());
+        Assert.assertEquals("30", resp.getMsgResponse().getRespCode());
+        Assert.assertEquals("MessageFormat", resp.getMsgResponse().getRespDesc());
+    }
+
+    @Test
+    public void testScanPaySuccess() throws IOException {
+        MockSspClient mockSsp = new MockSspClient();
+        Map<String, String> reqMap = new HashMap<>();
+        reqMap.put("931", "06");
+        reqMap.put("004", "1000");
+        reqMap.put("041", "12345678");
+        reqMap.put("042", "123456789012345");
+        reqMap.put("068", "201901021408230001");
+        reqMap.put("066", "payLoad");
+        Mockito.when(sspClient.send(Mockito.any(ByteBuffer.class)))
+                .thenReturn(mockSsp.send(ByteBuffer.wrap(TlvPacker.packer(reqMap).getBytes())));
+
+        ScanPay info = new ScanPay();
+        info.setTerminalId("12345678");
+        info.setMerchantId("123456789012345");
+        info.setTranAmt(BigInteger.valueOf(1000));
+        info.setCcyCode("702");
+        info.setMerTraceNo("201901021408230001");
+        info.setPayLoad("payLoad");
+        Response<ScanPay> resp = new Response<>();
+        sspService.scanPay(info, resp);
+
+        Assert.assertEquals(info, resp.getTrxInfo());
+        Assert.assertEquals("00", resp.getMsgResponse().getRespCode());
+        Assert.assertEquals("Approved", resp.getMsgResponse().getRespDesc());
+        Assert.assertEquals("1000", info.getTranAmt().toString());
+        Assert.assertEquals("702", info.getCcyCode());
+        Assert.assertEquals("1000", info.getOriginalAmt().toString());
+        Assert.assertEquals("10", info.getCostAmt().toString());
+        Assert.assertEquals("01", info.getChannelId());
+        Assert.assertEquals("bankLsNo", info.getBankLsNo());
+        Assert.assertEquals("channelTraceNo", info.getChannelTraceNo());
     }
 
     @Test
@@ -86,7 +162,6 @@ public class SspServiceTest {
 
         Refund info = new Refund();
         info.setTranAmt(BigInteger.valueOf(100));
-        info.setCcyCode("702");
         Response<Refund> resp = new Response<>();
         sspService.refund(info, resp);
 
@@ -102,7 +177,6 @@ public class SspServiceTest {
 
         Refund info = new Refund();
         info.setTranAmt(BigInteger.valueOf(100));
-        info.setCcyCode("702");
         Response<Refund> resp = new Response<>();
         sspService.refund(info, resp);
 
@@ -149,7 +223,6 @@ public class SspServiceTest {
 
         Query info = new Query();
         info.setTranAmt(BigInteger.valueOf(100));
-        info.setCcyCode("702");
         Response<Query> resp = new Response<>();
         sspService.query(info, resp);
 
@@ -165,13 +238,14 @@ public class SspServiceTest {
 
         Query info = new Query();
         info.setTranAmt(BigInteger.valueOf(100));
-        info.setCcyCode("702");
         Response<Query> resp = new Response<>();
         sspService.query(info, resp);
 
         Assert.assertEquals(info, resp.getTrxInfo());
-        Assert.assertEquals("30", resp.getMsgResponse().getRespCode());
-        Assert.assertEquals("MessageFormat", resp.getMsgResponse().getRespDesc());
+        Assert.assertEquals("00", resp.getMsgResponse().getRespCode());
+        Assert.assertEquals("Approved", resp.getMsgResponse().getRespDesc());
+        Assert.assertEquals("30", resp.getTrxInfo().getTrxRespCode());
+        Assert.assertEquals("MessageFormat", resp.getTrxInfo().getTrxRespDesc());
     }
 
     @Test

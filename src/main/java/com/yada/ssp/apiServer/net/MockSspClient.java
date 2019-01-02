@@ -35,7 +35,7 @@ public class MockSspClient implements SspClient {
     private String qrCode(Map<String, String> data) {
         data.put("039", "00");
         data.put("040", "Approved");
-        data.put("065", DateUtil.getCurDateTime() + "0001"); // bankLsNo
+        data.put("065", "bankLsNo"); // bankLsNo
         data.put("066", "0002010102121531104000441234567810000000000066652045411530315654041.015802CN5925Test Merchant 123456789016003BBM6106111   6228051200000000702307087894561263041006"); // payLoad
         data.put("067", "180"); // timeout
         return TlvPacker.packer(data);
@@ -44,13 +44,13 @@ public class MockSspClient implements SspClient {
     private String scanPay(Map<String, String> data) {
         data.put("039", "00");
         data.put("040", "Approved");
-        data.put("065", DateUtil.getCurDateTime() + "0001"); // bankLsNo
-        data.put("069", DateUtil.getCurDateTime() + "000001"); // channelTraceNo
         data.put("070", "01"); // channelId
         data.put("074", "1000"); // originalAmt
         data.put("075", "10"); // costAmt
         data.put("076", "0"); // discountAmt
         data.put("077", "None"); // discountNote
+        data.put("065", "bankLsNo"); // bankLsNo
+        data.put("069", "channelTraceNo"); // channelTraceNo
         data.remove("066"); // payLoad
         return TlvPacker.packer(data);
     }

@@ -46,7 +46,7 @@ public class SspService {
             if ("00".equals(respMap.get("039"))) {
                 info.setBankLsNo(respMap.get("065"));
                 info.setPayLoad(respMap.get("066"));
-                info.setExpTime(respMap.get("067"));
+                info.setExpTime(Integer.parseInt(respMap.get("067")));
             } else {
                 logger.warn("获取付款码失败,返回码是[{}],提示信息是[{}]", respMap.get("039"), respMap.get("040"));
             }
@@ -135,20 +135,24 @@ public class SspService {
             Map<String, String> respMap = TlvPacker.unPacker(new String(respBuffer.array()));
             resp.setMsgResponse(new MsgResponse("00", "Approved"));
 
-            info.setTranAmt(new BigInteger(respMap.get("004")));
-            info.setCcyCode(respMap.get("018"));
-            DiscountDetail discountDetail = new DiscountDetail();
-            discountDetail.setDiscountAmt(new BigInteger(respMap.get("076")));
-            discountDetail.setDiscountNote(respMap.get("077"));
-            info.setDiscountDetails(Collections.singletonList(discountDetail));
-            info.setOriginalAmt(new BigInteger(respMap.get("074")));
-            info.setCostAmt(new BigInteger(respMap.get("075")));
-            info.setChannelId(respMap.get("070"));
-            info.setOriginalMerTraceNo(respMap.get("072"));
-            info.setBankLsNo(respMap.get("065"));
-            info.setChannelTraceNo(respMap.get("069"));
             info.setTrxRespCode(respMap.get("039"));
             info.setTrxRespDesc(respMap.get("040"));
+            if ("00".equals(respMap.get("039"))) {
+                info.setTranAmt(new BigInteger(respMap.get("004")));
+                info.setCcyCode(respMap.get("018"));
+                DiscountDetail discountDetail = new DiscountDetail();
+                discountDetail.setDiscountAmt(new BigInteger(respMap.get("076")));
+                discountDetail.setDiscountNote(respMap.get("077"));
+                info.setDiscountDetails(Collections.singletonList(discountDetail));
+                info.setOriginalAmt(new BigInteger(respMap.get("074")));
+                info.setCostAmt(new BigInteger(respMap.get("075")));
+                info.setChannelId(respMap.get("070"));
+                info.setOriginalMerTraceNo(respMap.get("072"));
+                info.setBankLsNo(respMap.get("065"));
+                info.setChannelTraceNo(respMap.get("069"));
+            } else {
+                logger.warn("发起查询失败,返回码是[{}],提示信息是[{}]", respMap.get("039"), respMap.get("040"));
+            }
         } catch (IOException e) {
             resp.setMsgResponse(new MsgResponse("91", "Issuer system error"));
             logger.warn("发起查询异常,请求报文是[{}],异常信息是[{}]", reqStr, e.getMessage());
