@@ -66,6 +66,7 @@ public class SspService {
         reqMap.put("042", info.getMerchantId());
         reqMap.put("068", info.getMerTraceNo());
         reqMap.put("066", info.getPayLoad());
+        reqMap.put("078", info.getCouponInfo());
         String reqStr = TlvPacker.packer(reqMap);
         try {
             logger.info("反扫交易的请求报文是[{}]", reqStr);

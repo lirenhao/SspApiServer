@@ -38,6 +38,7 @@ public class ScanPay extends TrxInfo {
     @Size(min = 1, max = 512)
     private String payLoad; // 客户付款码
 
+    @Size(max = 30)
     private String couponInfo; // 优惠券，暂不使用
 
     private String channelTraceNo; // 二维码渠道对应系统的流水号
