@@ -58,15 +58,14 @@ public class SspService {
     }
 
     void scanPay(ScanPay info, Response<ScanPay> resp) {
-        // TODO 反扫交易
         Map<String, String> reqMap = new HashMap<>();
-        reqMap.put("931", "");
+        reqMap.put("931", "06");
         reqMap.put("004", info.getTranAmt().toString());
         reqMap.put("018", info.getCcyCode());
         reqMap.put("041", info.getTerminalId());
         reqMap.put("042", info.getMerchantId());
         reqMap.put("068", info.getMerTraceNo());
-        reqMap.put("", info.getPayLoad());
+        reqMap.put("066", info.getPayLoad());
         String reqStr = TlvPacker.packer(reqMap);
         try {
             logger.info("反扫交易的请求报文是[{}]", reqStr);
@@ -75,11 +74,11 @@ public class SspService {
             resp.setMsgResponse(new MsgResponse(respMap.get("039"), respMap.get("040")));
             if ("00".equals(respMap.get("039"))) {
                 DiscountDetail discountDetail = new DiscountDetail();
-                discountDetail.setDiscountAmt(new BigInteger(respMap.get("")));
-                discountDetail.setDiscountNote(respMap.get(""));
+                discountDetail.setDiscountAmt(new BigInteger(respMap.get("076")));
+                discountDetail.setDiscountNote(respMap.get("077"));
                 info.setDiscountDetails(Collections.singletonList(discountDetail));
-                info.setOriginalAmt(new BigInteger(respMap.get("")));
-                info.setCostAmt(new BigInteger(respMap.get("")));
+                info.setOriginalAmt(new BigInteger(respMap.get("074")));
+                info.setCostAmt(new BigInteger(respMap.get("075")));
                 info.setChannelId(respMap.get("070"));
                 info.setBankLsNo(respMap.get("065"));
                 info.setChannelTraceNo(respMap.get("069"));
@@ -124,7 +123,6 @@ public class SspService {
     }
 
     void query(Query info, Response<Query> resp) {
-        // TODO 查询交易
         Map<String, String> reqMap = new HashMap<>();
         reqMap.put("931", "02");
         reqMap.put("041", info.getTerminalId());
@@ -140,13 +138,13 @@ public class SspService {
             info.setTranAmt(new BigInteger(respMap.get("004")));
             info.setCcyCode(respMap.get("018"));
             DiscountDetail discountDetail = new DiscountDetail();
-            discountDetail.setDiscountAmt(new BigInteger(respMap.get("")));
-            discountDetail.setDiscountNote(respMap.get(""));
+            discountDetail.setDiscountAmt(new BigInteger(respMap.get("076")));
+            discountDetail.setDiscountNote(respMap.get("077"));
             info.setDiscountDetails(Collections.singletonList(discountDetail));
-            info.setOriginalAmt(new BigInteger(respMap.get("")));
-            info.setCostAmt(new BigInteger(respMap.get("")));
+            info.setOriginalAmt(new BigInteger(respMap.get("074")));
+            info.setCostAmt(new BigInteger(respMap.get("075")));
             info.setChannelId(respMap.get("070"));
-            info.setOriginalMerTraceNo(respMap.get(""));
+            info.setOriginalMerTraceNo(respMap.get("072"));
             info.setBankLsNo(respMap.get("065"));
             info.setChannelTraceNo(respMap.get("069"));
             info.setTrxRespCode(respMap.get("039"));
