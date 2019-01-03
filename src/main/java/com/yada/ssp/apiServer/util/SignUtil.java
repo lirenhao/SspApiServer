@@ -2,6 +2,7 @@ package com.yada.ssp.apiServer.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.codec.binary.Hex;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -25,7 +26,7 @@ public class SignUtil {
     }
 
     public static String SHA256(String data) throws NoSuchAlgorithmException {
-        return new String(SHA256(data.getBytes()));
+        return Hex.encodeHexString(SHA256(data.getBytes()));
     }
 
     /**
