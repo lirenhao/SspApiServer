@@ -5,17 +5,21 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Request<T extends TrxInfo> {
 
     @Valid
+    @NotNull
     private MsgInfo msgInfo;
 
     @Valid
+    @NotNull
     private T trxInfo;
 
     @Valid
+    @NotNull
     private CertificateSignature certificateSignature;
 
     @JsonIgnore

@@ -70,9 +70,7 @@ public class ApiServiceTest {
         Assert.assertEquals(trxInfo, resp.getTrxInfo());
         Assert.assertEquals("03", resp.getMsgResponse().getRespCode());
         Assert.assertEquals("Invalid merchant", resp.getMsgResponse().getRespDesc());
-        String respSign = resp.getCertificateSignature().getSignature();
-        resp.setCertificateSignature(certSign);
-        Assert.assertTrue(SignUtil.verify(resp, respSign, publicKey));
+        Assert.assertEquals("00000000", resp.getCertificateSignature().getSignature());
     }
 
     @Test
@@ -80,6 +78,7 @@ public class ApiServiceTest {
         ApiOrg orgKey = new ApiOrg();
         orgKey.setOrgId("0001");
         orgKey.setPublicKey(publicKey);
+        orgKey.setPrivateKey(privateKey);
         Merchant mer = new Merchant();
         mer.setMerNo("123456789012345");
         orgKey.getMerchants().add(mer);
@@ -117,6 +116,7 @@ public class ApiServiceTest {
         ApiOrg orgKey = new ApiOrg();
         orgKey.setOrgId("0001");
         orgKey.setPublicKey(publicKey);
+        orgKey.setPrivateKey(privateKey);
         Merchant mer = new Merchant();
         mer.setMerNo("123456789012345");
         orgKey.getMerchants().add(mer);

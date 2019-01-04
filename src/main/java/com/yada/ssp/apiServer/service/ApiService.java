@@ -9,7 +9,6 @@ import com.yada.ssp.apiServer.view.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -21,9 +20,6 @@ import java.util.stream.Collectors;
 public class ApiService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Value("${signature.private-key}")
-    private String privateKey;
 
     private final ApiOrgDao apiOrgDao;
     private final SspService sspService;
@@ -73,7 +69,9 @@ public class ApiService {
         }
         resp.getMsgInfo().setTimeStamp(DateUtil.getCurDateTime());
         // 响应信息签名
-        signature.setSignature(SignUtil.sign(resp, privateKey));
+        if (apiOrg.getPrivateKey() != null) {
+            signature.setSignature(SignUtil.sign(resp, apiOrg.getPrivateKey()));
+        }
         resp.setCertificateSignature(signature);
         return resp;
     }
