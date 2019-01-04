@@ -15,13 +15,13 @@ public class ApiOrg {
     @Column
     private String orgName;
 
-    @Column
+    @Column(length = 1024)
     private String publicKey; // 商户公钥
 
     @Column
     private String notifyUrl;
 
-    @Column
+    @Column(length = 1024)
     private String privateKey; // 银行私钥
 
     @OneToMany
