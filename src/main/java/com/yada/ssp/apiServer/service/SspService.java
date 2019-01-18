@@ -75,11 +75,11 @@ public class SspService {
             resp.setMsgResponse(new MsgResponse(respMap.get("039"), respMap.get("040")));
             if ("00".equals(respMap.get("039"))) {
                 DiscountDetail discountDetail = new DiscountDetail();
-                discountDetail.setDiscountAmt(new BigInteger(respMap.get("076")));
+                discountDetail.setDiscountAmt(setAmt(respMap.get("076")));
                 discountDetail.setDiscountNote(respMap.get("077"));
                 info.setDiscountDetails(Collections.singletonList(discountDetail));
-                info.setOriginalAmt(new BigInteger(respMap.get("074")));
-                info.setCostAmt(new BigInteger(respMap.get("075")));
+                info.setOriginalAmt(setAmt(respMap.get("074")));
+                info.setCostAmt(setAmt(respMap.get("075")));
                 info.setChannelId(respMap.get("070"));
                 info.setBankLsNo(respMap.get("065"));
                 info.setChannelTraceNo(respMap.get("069"));
@@ -139,14 +139,14 @@ public class SspService {
             info.setTrxRespCode(respMap.get("039"));
             info.setTrxRespDesc(respMap.get("040"));
             if ("00".equals(respMap.get("039"))) {
-                info.setTranAmt(new BigInteger(respMap.get("004")));
+                info.setTranAmt(setAmt(respMap.get("004")));
                 info.setCcyCode(respMap.get("018"));
                 DiscountDetail discountDetail = new DiscountDetail();
-                discountDetail.setDiscountAmt(new BigInteger(respMap.get("076")));
+                discountDetail.setDiscountAmt(setAmt(respMap.get("076")));
                 discountDetail.setDiscountNote(respMap.get("077"));
                 info.setDiscountDetails(Collections.singletonList(discountDetail));
-                info.setOriginalAmt(new BigInteger(respMap.get("074")));
-                info.setCostAmt(new BigInteger(respMap.get("075")));
+                info.setOriginalAmt(setAmt(respMap.get("074")));
+                info.setCostAmt(setAmt(respMap.get("075")));
                 info.setChannelId(respMap.get("070"));
                 info.setOriginalMerTraceNo(respMap.get("072"));
                 info.setBankLsNo(respMap.get("065"));
@@ -159,5 +159,9 @@ public class SspService {
             logger.warn("发起查询异常,请求报文是[{}],异常信息是[{}]", reqStr, e.getMessage());
         }
         resp.setTrxInfo(info);
+    }
+
+    private BigInteger setAmt(String value) {
+        return value == null ? null : new BigInteger(value);
     }
 }

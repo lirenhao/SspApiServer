@@ -1,6 +1,5 @@
 package com.yada.ssp.apiServer.net;
 
-import com.yada.ssp.apiServer.util.DateUtil;
 import com.yada.ssp.apiServer.util.TlvPacker;
 
 import java.nio.ByteBuffer;
@@ -47,7 +46,7 @@ public class MockSspClient implements SspClient {
         data.put("070", "01"); // channelId
         data.put("074", "1000"); // originalAmt
         data.put("075", "10"); // costAmt
-        data.put("076", "0"); // discountAmt
+        // data.put("076", "0"); // discountAmt
         data.put("077", "None"); // discountNote
         data.put("065", "bankLsNo"); // bankLsNo
         data.put("069", "channelTraceNo"); // channelTraceNo
